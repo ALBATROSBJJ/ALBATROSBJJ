@@ -13,7 +13,7 @@ import { getTacticalRecipes } from './actions';
 import type { GenerateTacticalRecipesOutput } from '@/ai/flows/generate-tactical-recipes';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Zap, Users, List, ChefHat, BrainCircuit } from 'lucide-react';
+import { Clock, Zap, Users, List, ChefHat, BrainCircuit, Sparkles } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
 
@@ -218,7 +218,7 @@ export default function ChefIAPage() {
             </div>
           ) : (
              <div className="flex flex-col items-center justify-center text-center border rounded-md h-full min-h-[500px] p-8 bg-background/50">
-              <Cpu className="h-16 w-16 text-muted-foreground/50 mb-4" />
+              <Sparkles className="h-16 w-16 text-muted-foreground/50 mb-4" />
               <h3 className="text-xl font-bold">Esperando Órdenes</h3>
               <p className="text-muted-foreground">Completa los parámetros para recibir tu plan de asalto nutricional.</p>
             </div>

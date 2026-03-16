@@ -100,9 +100,11 @@ export default function DashboardPage() {
             <CardDescription>Análisis táctico de tu semana.</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="font-mono text-sm italic">
-              "Balance energético positivo en 5 de 7 días. Estás en fase de carga, bien. Pero el martes te quedaste corto. Eso es un error de novato. En el campamento, cada caloría cuenta. No quiero volver a ver números rojos en tu gasto. La proteína está al 95%, aceptable, pero no perfecto. La perfección gana peleas. Ajusta el timing de tu batido post-entreno del martes. Quiero 100% de adherencia la próxima semana. ¿Entendido?"
-            </p>
+            <blockquote className="border-l-2 border-primary pl-4">
+              <p className="text-sm text-muted-foreground">
+                "Balance energético positivo en 5 de 7 días. Estás en fase de carga, bien. Pero el martes te quedaste corto. Eso es un error de novato. En el campamento, cada caloría cuenta. No quiero volver a ver números rojos en tu gasto. La proteína está al 95%, aceptable, pero no perfecto. La perfección gana peleas. Ajusta el timing de tu batido post-entreno del martes. Quiero 100% de adherencia la próxima semana. ¿Entendido?"
+              </p>
+            </blockquote>
           </CardContent>
         </Card>
       </div>
