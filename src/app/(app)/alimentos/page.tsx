@@ -12,9 +12,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 // Based on docs/backend.json
 type FoodItem = {
   id: string;
-  name: string;
+  nombre: string;
   category: string;
-  caloriesPer100g: number;
+  calorias: number;
   proteinPer100g: number;
   fatPer100g: number;
   carbohydratesPer100g: number;
@@ -33,7 +33,7 @@ export default function AlimentosPage() {
   const { data: alimentos, isLoading } = useCollection<FoodItem>(alimentosQuery);
   
   const filteredAlimentos = alimentos?.filter(alimento =>
-    (alimento?.name ?? '').toLowerCase().includes(searchTerm.toLowerCase())
+    (alimento?.nombre ?? '').toLowerCase().includes(searchTerm.toLowerCase())
   );
   
   const isDataEmpty = !isLoading && (!alimentos || alimentos.length === 0);
@@ -87,8 +87,8 @@ export default function AlimentosPage() {
                   {filteredAlimentos && filteredAlimentos.length > 0 && (
                     filteredAlimentos.map(item => (
                       <TableRow key={item.id}>
-                        <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell className="text-right">{item.caloriesPer100g} kcal</TableCell>
+                        <TableCell className="font-medium">{item.nombre}</TableCell>
+                        <TableCell className="text-right">{item.calorias} kcal</TableCell>
                       </TableRow>
                     ))
                   )}
@@ -108,3 +108,5 @@ export default function AlimentosPage() {
     </div>
   );
 }
+
+    
