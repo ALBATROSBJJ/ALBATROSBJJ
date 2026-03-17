@@ -15,6 +15,7 @@ type Biometrics = {
   activityLevel: number;
 };
 
+// Data for the weekly chart
 const energyBalanceData = [
   { day: 'Lun', intake: 2800, expenditure: 2500, surplus: 300 },
   { day: 'Mar', intake: 2600, expenditure: 2700, surplus: -100 },
@@ -25,12 +26,15 @@ const energyBalanceData = [
   { day: 'Dom', intake: 2400, expenditure: 1800, surplus: 600 },
 ];
 
-const weeklyConsumed = {
-  calories: 18500,
-  protein: 1200,
-  carbs: 2000,
-  fats: 600,
+// Mock data for today's consumption
+const dailyConsumed = {
+  calories: 3000,
+  protein: 190,
+  carbs: 350,
+  fats: 80,
+  expenditure: 2400, // Gasto del día
 };
+
 
 const chartConfig = {
   intake: {
@@ -51,12 +55,12 @@ export default function DashboardPage() {
     age: 28,
     activityLevel: 1.55,
   });
-  const [goal] = React.useState<'maintain' | 'lose' | 'gain'>('maintain');
-  const [weeklyTargets, setWeeklyTargets] = React.useState({
-    calories: 21000,
-    protein: 1260,
-    carbs: 2200,
-    fats: 630,
+  const [goal] = React.useState<'maintain' | 'lose' | 'gain'>('gain');
+  const [dailyTargets, setDailyTargets] = React.useState({
+    calories: 3200,
+    protein: 185,
+    carbs: 380,
+    fats: 90,
   });
 
   const calculateTargets = React.useCallback(() => {
@@ -81,11 +85,11 @@ export default function DashboardPage() {
     const carbsKcal = targetCalories - (proteinG * 4) - (fatG * 9);
     const carbsG = carbsKcal / 4;
     
-    setWeeklyTargets({
-      calories: Math.round(targetCalories * 7),
-      protein: Math.round(proteinG * 7),
-      fats: Math.round(fatG * 7),
-      carbs: Math.round(carbsG * 7),
+    setDailyTargets({
+      calories: Math.round(targetCalories),
+      protein: Math.round(proteinG),
+      fats: Math.round(fatG),
+      carbs: Math.round(carbsG),
     });
   }, [biometrics, goal]);
 
@@ -93,39 +97,50 @@ export default function DashboardPage() {
     calculateTargets();
   }, [calculateTargets]);
 
-  const renderMacroProgress = (key: 'calories' | 'protein' | 'carbs' | 'fats', title: string) => {
-    const consumed = weeklyConsumed[key];
-    const target = weeklyTargets[key];
+  const renderMacroProgress = (key: 'protein' | 'carbs' | 'fats', title: string) => {
+    const consumed = dailyConsumed[key as keyof typeof dailyConsumed];
+    const target = dailyTargets[key as keyof typeof dailyTargets];
     const percentage = (consumed / target) * 100;
     return (
       <div>
         <div className="flex justify-between items-baseline mb-1">
           <h4 className="text-sm font-medium text-muted-foreground">{title}</h4>
           <p className="text-sm font-mono tracking-tighter">
-            <span className="font-bold text-foreground">{consumed.toLocaleString()}</span> / {target.toLocaleString()}
+            <span className="font-bold text-foreground">{consumed.toLocaleString()}</span> / {target.toLocaleString()} g
           </p>
         </div>
         <Progress value={percentage} className="h-2" />
       </div>
     )
   }
+  
+  const DailyCalorieSummary = () => {
+    const netBalance = dailyConsumed.calories - dailyConsumed.expenditure;
 
-  const DailyCalorieSummary = () => (
-    <div className="mt-6">
-      <h4 className="text-sm font-medium text-muted-foreground mb-3">Resumen Diario de Calorías</h4>
-      <div className="space-y-2 text-sm">
-        {energyBalanceData.map(item => (
-          <div key={item.day} className="flex justify-between items-center">
-            <span className="font-medium">{item.day}</span>
-            <div className="flex gap-4 font-mono tracking-tighter">
-              <span>Ingesta: <span className="font-bold text-foreground">{item.intake}</span></span>
-              <span>Gasto: <span className="font-bold text-foreground">{item.expenditure}</span></span>
-            </div>
+    return (
+      <div>
+        <h3 className="text-lg font-bold tracking-tight mb-4">Balance Calórico del Día</h3>
+        <div className="p-4 rounded-md border bg-secondary/50 space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">Ingesta</span>
+            <span className="font-mono tracking-tighter font-bold text-foreground">{dailyConsumed.calories.toLocaleString()} kcal</span>
           </div>
-        ))}
+           <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">Gasto</span>
+            <span className="font-mono tracking-tighter font-bold text-foreground">{dailyConsumed.expenditure.toLocaleString()} kcal</span>
+          </div>
+          <Separator />
+           <div className="flex justify-between items-center">
+            <span className="font-medium">Balance Neto</span>
+            <span className={`font-mono tracking-tighter font-bold ${netBalance > 0 ? 'text-primary' : 'text-destructive'}`}>
+                {netBalance > 0 ? '+' : ''}{netBalance.toLocaleString()} kcal
+            </span>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
+
 
   return (
     <div className="p-4 md:p-8 space-y-8">
@@ -137,25 +152,29 @@ export default function DashboardPage() {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader>
-            <CardTitle className="font-black tracking-tighter">Adherencia Semanal</CardTitle>
-            <CardDescription>Cumplimiento de macros y calorías.</CardDescription>
+            <CardTitle className="font-black tracking-tighter">Adherencia Diaria</CardTitle>
+            <CardDescription>Cumplimiento de objetivos para hoy.</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {renderMacroProgress('calories', 'Calorías (kcal)')}
-              {renderMacroProgress('protein', 'Proteína (g)')}
-              {renderMacroProgress('carbs', 'Carbohidratos (g)')}
-              {renderMacroProgress('fats', 'Grasas (g)')}
+              <DailyCalorieSummary />
+              <Separator />
+              <div>
+                <h3 className="text-lg font-bold tracking-tight mb-4">Macros de Combate</h3>
+                <div className="space-y-4">
+                    {renderMacroProgress('protein', 'Proteína (g)')}
+                    {renderMacroProgress('carbs', 'Carbohidratos (g)')}
+                    {renderMacroProgress('fats', 'Grasas (g)')}
+                </div>
+              </div>
             </div>
-            <Separator className="my-6"/>
-            <DailyCalorieSummary />
           </CardContent>
         </Card>
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="font-black tracking-tighter">Balance Energético Diario</CardTitle>
-            <CardDescription>Ingesta vs. Gasto calórico.</CardDescription>
+            <CardTitle className="font-black tracking-tighter">Balance Energético Semanal</CardTitle>
+            <CardDescription>Ingesta vs. Gasto calórico en los últimos 7 días.</CardDescription>
           </CardHeader>
           <CardContent>
             <ChartContainer config={chartConfig} className="h-[280px] w-full">
