@@ -6,10 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { User, Weight, Ruler, Cake, Activity, Target, Flame, HeartPulse } from 'lucide-react';
+import { User, Weight, Ruler, Cake, Activity, Target, Flame, HeartPulse, PlusCircle } from 'lucide-react';
 import { activities, type Activity as MetActivity } from '@/lib/met-values';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useDailyData } from '@/context/DailyDataProvider';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 type Biometrics = {
   gender: 'male' | 'female';
@@ -37,6 +39,7 @@ export default function LaboratorioPage() {
   const [duration, setDuration] = React.useState(30);
   const [burnedCalories, setBurnedCalories] = React.useState<number | null>(null);
   const { setExpenditureCalories } = useDailyData();
+  const { toast } = useToast();
 
   const [bodyFatMethod, setBodyFatMethod] = React.useState<'navy' | 'bmi'>('navy');
   const [measurements, setMeasurements] = React.useState({
@@ -97,12 +100,20 @@ export default function LaboratorioPage() {
       const calories = selectedActivity.met * biometrics.weight * (duration / 60);
       const roundedCalories = Math.round(calories);
       setBurnedCalories(roundedCalories);
-      setExpenditureCalories(roundedCalories);
     } else {
       setBurnedCalories(null);
-      setExpenditureCalories(0);
     }
-  }, [selectedActivity, biometrics.weight, duration, setExpenditureCalories]);
+  }, [selectedActivity, biometrics.weight, duration]);
+
+  const handleAddExpenditure = () => {
+    if (burnedCalories && burnedCalories > 0) {
+      setExpenditureCalories(prev => prev + burnedCalories);
+      toast({
+        title: "Gasto Energético Añadido",
+        description: `${burnedCalories} kcal han sido sumadas a tu gasto diario.`,
+      });
+    }
+  };
 
   const calculateBodyFat = React.useCallback(() => {
     const { weight, height, gender, age } = biometrics;
@@ -318,12 +329,18 @@ export default function LaboratorioPage() {
                       />
                     </div>
                   </div>
-                  {burnedCalories !== null && (
-                    <div className="p-4 rounded-md border bg-secondary/50 text-center">
-                      <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Calorías Quemadas Estimadas</h3>
-                      <p className="text-4xl font-black text-primary tracking-tighter">{burnedCalories} <span className="text-2xl text-muted-foreground">kcal</span></p>
+                   <div className="p-4 rounded-md border bg-secondary/50 text-center space-y-4">
+                        <div>
+                            <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Calorías Quemadas Estimadas</h3>
+                            <p className="text-4xl font-black text-primary tracking-tighter">{burnedCalories ?? 0} <span className="text-2xl text-muted-foreground">kcal</span></p>
+                        </div>
+                        {burnedCalories !== null && burnedCalories > 0 && (
+                            <Button onClick={handleAddExpenditure}>
+                                <PlusCircle className="mr-2 h-4 w-4"/>
+                                Sumar Gasto al Dashboard
+                            </Button>
+                        )}
                     </div>
-                  )}
                 </CardContent>
               </Card>
             </TabsContent>

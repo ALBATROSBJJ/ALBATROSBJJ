@@ -12,6 +12,7 @@ import {
   SidebarFooter,
   SidebarContent,
   SidebarGroup,
+  SidebarMenuSkeleton,
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
@@ -94,6 +95,40 @@ export function AppSidebar() {
                         <span>{logoutItem.label}</span>
                     </Link>
                   </SidebarMenuButton>
+                </SidebarMenuItem>
+            </SidebarMenu>
+         </SidebarGroup>
+      </SidebarFooter>
+    </Sidebar>
+  );
+}
+
+
+export function AppSidebarSkeleton() {
+  return (
+    <Sidebar variant="sidebar" collapsible="icon">
+      <SidebarHeader>
+        <Logo />
+      </SidebarHeader>
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarMenu>
+            {[...Array(6)].map((_, i) => (
+              <SidebarMenuItem key={i}>
+                <SidebarMenuSkeleton showIcon />
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+      <SidebarFooter className="border-t border-border">
+         <SidebarGroup>
+            <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuSkeleton showIcon />
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuSkeleton showIcon />
                 </SidebarMenuItem>
             </SidebarMenu>
          </SidebarGroup>
