@@ -32,7 +32,7 @@ export default function AlimentosPage() {
   const { data: alimentos, isLoading } = useCollection<FoodItem>(alimentosQuery);
 
   const filteredAlimentos = alimentos?.filter(alimento =>
-    alimento.name.toLowerCase().includes(searchTerm.toLowerCase())
+    (alimento?.name ?? '').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
