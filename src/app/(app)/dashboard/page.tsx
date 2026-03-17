@@ -28,13 +28,13 @@ const energyBalanceData = [
 ];
 
 const chartConfig = {
-  superavit: {
-    label: "Superávit",
+  intake: {
+    label: "Ingesta",
     color: "hsl(var(--primary))",
   },
-  deficit: {
-    label: "Déficit",
-    color: "hsl(var(--destructive))",
+  expenditure: {
+    label: "Gasto",
+    color: "hsl(var(--muted-foreground))",
   },
 }
 
@@ -111,12 +111,6 @@ export default function DashboardPage() {
   }, [biometrics]);
 
   const targetNetBalance = Math.round(dailyTargets.calories - tdee);
-
-  const transformedEnergyBalanceData = energyBalanceData.map(d => ({
-    ...d,
-    superavit: d.surplus > 0 ? d.surplus : 0,
-    deficit: d.surplus < 0 ? d.surplus : 0,
-  }));
 
   const renderMacroProgress = (key: 'protein' | 'carbs' | 'fats', title: string) => {
     const consumed = dailyConsumed[key as keyof typeof dailyConsumed];
@@ -226,13 +220,13 @@ export default function DashboardPage() {
         <div className="grid gap-6 lg:col-span-2">
           <Card>
             <CardHeader>
-              <CardTitle className="font-black tracking-tighter">Balance Neto Semanal</CardTitle>
-              <CardDescription>Balance calórico neto (ingesta - gasto) de los últimos 7 días.</CardDescription>
+              <CardTitle className="font-black tracking-tighter">Balance Energético Semanal</CardTitle>
+              <CardDescription>Ingesta vs. Gasto Calórico de los últimos 7 días.</CardDescription>
             </CardHeader>
             <CardContent>
                <ChartContainer config={chartConfig} className="h-[300px] w-full">
                 <ResponsiveContainer>
-                  <BarChart data={transformedEnergyBalanceData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }} barGap={4}>
+                  <BarChart data={energyBalanceData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }} barGap={4}>
                     <CartesianGrid vertical={false} strokeDasharray="3 3" />
                     <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} />
                     <YAxis tickLine={false} axisLine={false} tickMargin={8} unit="kcal" />
@@ -242,13 +236,13 @@ export default function DashboardPage() {
                     />
                      <ChartLegend content={<ChartLegendContent />} />
                     <ReferenceLine 
-                      y={targetNetBalance} 
-                      label={{ value: 'Meta Neta', position: 'insideTopRight', fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                      y={dailyTargets.calories} 
+                      label={{ value: 'Meta Ingesta', position: 'insideTopRight', fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
                       stroke="hsl(var(--ring))" 
                       strokeDasharray="2 6" 
                     />
-                    <Bar dataKey="superavit" stackId="balance" fill="var(--color-superavit)" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="deficit" stackId="balance" fill="var(--color-deficit)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="intake" fill="var(--color-intake)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="expenditure" fill="var(--color-expenditure)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
