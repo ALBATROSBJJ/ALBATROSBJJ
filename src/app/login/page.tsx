@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -14,8 +14,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Logo } from "@/components/logo";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth, useUser } from "@/firebase";
-import { initiateEmailSignIn } from "@/firebase/non-blocking-login";
+import { initiateEmailSignIn, initiatePasswordReset } from "@/firebase/non-blocking-login";
 import type { AuthError } from "firebase/auth";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 const formSchema = z.object({
   email: z.string().email("Por favor, introduce un email válido."),
@@ -27,6 +29,9 @@ export default function LoginPage() {
   const { user, isUserLoading } = useUser();
   const router = useRouter();
   const { toast } = useToast();
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,6 +59,41 @@ export default function LoginPage() {
         description,
       });
     });
+  };
+
+  const handlePasswordReset = () => {
+    if (!resetEmail) {
+      toast({
+        variant: "destructive",
+        title: "Email Requerido",
+        description: "Por favor, introduce tu dirección de email.",
+      });
+      return;
+    }
+    
+    initiatePasswordReset(
+      auth,
+      resetEmail,
+      () => { // onSuccess
+        toast({
+          title: "Email Enviado",
+          description: "Revisa tu bandeja de entrada para el enlace de restablecimiento.",
+        });
+        setIsResetDialogOpen(false);
+        setResetEmail("");
+      },
+      (error: AuthError) => { // onError
+        let description = "Ocurrió un error inesperado.";
+        if (error.code === 'auth/user-not-found') {
+          description = "No se encontró ningún usuario con este email.";
+        }
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description,
+        });
+      }
+    );
   };
   
   if (isUserLoading || user) {
@@ -102,12 +142,42 @@ export default function LoginPage() {
                   <FormItem className="grid gap-2">
                     <div className="flex items-center">
                       <FormLabel htmlFor="password">Contraseña</FormLabel>
-                      <Link
-                        href="#"
-                        className="ml-auto inline-block text-xs underline"
-                      >
-                        ¿Olvidaste tu contraseña?
-                      </Link>
+                      <Dialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="link"
+                            type="button"
+                            className="ml-auto inline-block text-xs underline p-0 h-auto"
+                          >
+                            ¿Olvidaste tu contraseña?
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[425px]">
+                          <DialogHeader>
+                            <DialogTitle>Restablecer Contraseña</DialogTitle>
+                            <DialogDescription>
+                              Introduce tu email para recibir un enlace de restablecimiento.
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                              <Label htmlFor="reset-email" className="text-right">
+                                Email
+                              </Label>
+                              <Input
+                                id="reset-email"
+                                value={resetEmail}
+                                onChange={(e) => setResetEmail(e.target.value)}
+                                className="col-span-3"
+                                placeholder="atleta@email.com"
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button onClick={handlePasswordReset}>Enviar Email</Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
                     </div>
                     <FormControl>
                       <Input id="password" type="password" {...field} />
