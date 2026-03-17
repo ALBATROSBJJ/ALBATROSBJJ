@@ -21,6 +21,7 @@ import {
   BookCopy,
   User,
   LogOut,
+  AppWindow,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
 
@@ -30,6 +31,7 @@ const menuItems = [
   { href: '/laboratorio', label: 'Laboratorio', icon: FlaskConical },
   { href: '/chef-ia', label: 'Chef IA', icon: Cpu },
   { href: '/bitacora', label: 'Bitácora', icon: BookCopy },
+  { href: '/apps', label: 'Apps', icon: AppWindow },
 ];
 
 const profileItem = { href: '/perfil', label: 'Perfil Guerrero', icon: User };
