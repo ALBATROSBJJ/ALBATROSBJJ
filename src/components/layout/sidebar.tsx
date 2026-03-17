@@ -29,6 +29,7 @@ import { useAuth } from '@/firebase';
 import { initiateSignOut } from '@/firebase/non-blocking-login';
 import { useToast } from '@/hooks/use-toast';
 import type { AuthError } from 'firebase/auth';
+import { cn } from '@/lib/utils';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -122,34 +123,59 @@ export function AppSidebar() {
 
 
 export function AppSidebarSkeleton() {
+  // Directly return the skeleton structure without using the <Sidebar> component
+  // to avoid calling useSidebar() on the server, which causes a server-render error.
   return (
-    <Sidebar variant="sidebar" collapsible="icon">
-      <SidebarHeader>
-        <Logo />
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarMenu>
-            {[...Array(6)].map((_, i) => (
-              <SidebarMenuItem key={i}>
-                <SidebarMenuSkeleton showIcon />
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter className="border-t border-border">
-         <SidebarGroup>
-            <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuSkeleton showIcon />
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuSkeleton showIcon />
-                </SidebarMenuItem>
-            </SidebarMenu>
-         </SidebarGroup>
-      </SidebarFooter>
-    </Sidebar>
+    <div
+      className="group peer hidden md:block text-sidebar-foreground"
+      data-state="expanded" // Assume expanded for skeleton
+      data-variant="sidebar"
+      data-side="left"
+    >
+      <div
+        className={cn(
+          "duration-200 relative h-svh w-[--sidebar-width] bg-transparent transition-[width] ease-linear"
+        )}
+      />
+      <div
+        className={cn(
+          "duration-200 fixed inset-y-0 z-10 hidden h-svh w-[--sidebar-width] transition-[left,right,width] ease-linear md:flex",
+          "left-0",
+          "border-r" // Directly apply border for sidebar variant
+        )}
+      >
+        <div
+          data-sidebar="sidebar"
+          className="flex h-full w-full flex-col bg-sidebar"
+        >
+          <SidebarHeader>
+            <Logo />
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarGroup>
+              <SidebarMenu>
+                {[...Array(6)].map((_, i) => (
+                  <SidebarMenuItem key={i}>
+                    <SidebarMenuSkeleton showIcon />
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroup>
+          </SidebarContent>
+          <SidebarFooter className="border-t border-border">
+            <SidebarGroup>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                      <SidebarMenuSkeleton showIcon />
+                    </SidebarMenuItem>
+                    <SidebarMenuItem>
+                      <SidebarMenuSkeleton showIcon />
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarGroup>
+          </SidebarFooter>
+        </div>
+      </div>
+    </div>
   );
 }
