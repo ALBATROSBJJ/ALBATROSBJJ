@@ -52,15 +52,16 @@ export function AppSidebar() {
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href}>
-                  <SidebarMenuButton
-                    isActive={isActive(item.href)}
-                    tooltip={{ children: item.label }}
-                  >
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive(item.href)}
+                  tooltip={{ children: item.label }}
+                >
+                  <Link href={item.href}>
                     <item.icon />
                     <span>{item.label}</span>
-                  </SidebarMenuButton>
-                </Link>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
@@ -70,20 +71,27 @@ export function AppSidebar() {
          <SidebarGroup>
             <SidebarMenu>
                 <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(profileItem.href)}
+                    tooltip={{ children: profileItem.label }}
+                  >
                     <Link href={profileItem.href}>
-                        <SidebarMenuButton isActive={isActive(profileItem.href)} tooltip={{ children: profileItem.label }}>
-                            <profileItem.icon />
-                            <span>{profileItem.label}</span>
-                        </SidebarMenuButton>
+                      <profileItem.icon />
+                      <span>{profileItem.label}</span>
                     </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
+                  <SidebarMenuButton
+                    asChild
+                    tooltip={{ children: logoutItem.label }}
+                  >
                     <Link href={logoutItem.href}>
-                        <SidebarMenuButton tooltip={{ children: logoutItem.label }}>
-                            <logoutItem.icon />
-                            <span>{logoutItem.label}</span>
-                        </SidebarMenuButton>
+                        <logoutItem.icon />
+                        <span>{logoutItem.label}</span>
                     </Link>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>
          </SidebarGroup>
