@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { User, Weight, Ruler, Cake, Activity, Target, Flame, HeartPulse } from 'lucide-react';
 import { activities, type Activity as MetActivity } from '@/lib/met-values';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 type Biometrics = {
   gender: 'male' | 'female';
@@ -231,137 +232,148 @@ export default function LaboratorioPage() {
           </Card>
         </div>
 
-        <div className="lg:col-span-2 space-y-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-black tracking-tighter">Resultados Tácticos</CardTitle>
-              <CardDescription>Tus objetivos diarios calculados.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-8">
-              <div className="p-6 rounded-md border bg-secondary/50">
-                  <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Objetivo Calórico Diario</h3>
-                  <p className="text-5xl font-black text-primary tracking-tighter">{tdee?.toLocaleString() ?? '...'} <span className="text-3xl text-muted-foreground">kcal</span></p>
-                  <p className="text-sm text-muted-foreground mt-1">Metabolismo Basal (BMR): {bmr?.toLocaleString() ?? '...'} kcal</p>
-              </div>
-
-              <div>
-                <h3 className="text-lg font-bold tracking-tight mb-4">Macros de Combate</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-md border">
-                    <h4 className="text-muted-foreground">Proteína</h4>
-                    <p className="text-3xl font-black tracking-tighter">{macros?.protein ?? '...'}g</p>
-                    <p className="text-xs text-muted-foreground">2.2g / kg de peso</p>
+        <div className="lg:col-span-2">
+          <Tabs defaultValue="macros" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="macros">Metas Diarias</TabsTrigger>
+              <TabsTrigger value="gasto">Gasto por Ejercicio</TabsTrigger>
+              <TabsTrigger value="grasa">% Grasa Corporal</TabsTrigger>
+            </TabsList>
+            <TabsContent value="macros">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="font-black tracking-tighter">Resultados Tácticos</CardTitle>
+                  <CardDescription>Tus objetivos diarios calculados.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-8">
+                  <div className="p-6 rounded-md border bg-secondary/50">
+                      <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Objetivo Calórico Diario</h3>
+                      <p className="text-5xl font-black text-primary tracking-tighter">{tdee?.toLocaleString() ?? '...'} <span className="text-3xl text-muted-foreground">kcal</span></p>
+                      <p className="text-sm text-muted-foreground mt-1">Metabolismo Basal (BMR): {bmr?.toLocaleString() ?? '...'} kcal</p>
                   </div>
-                  <div className="p-4 rounded-md border">
-                    <h4 className="text-muted-foreground">Grasas</h4>
-                    <p className="text-3xl font-black tracking-tighter">{macros?.fat ?? '...'}g</p>
-                     <p className="text-xs text-muted-foreground">0.9g / kg de peso</p>
-                  </div>
-                   <div className="p-4 rounded-md border">
-                    <h4 className="text-muted-foreground">Carbohidratos</h4>
-                    <p className="text-3xl font-black tracking-tighter">{macros?.carbs ?? '...'}g</p>
-                     <p className="text-xs text-muted-foreground">Energía explosiva</p>
-                  </div>
-                </div>
-              </div>
 
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 font-black tracking-tighter"><Flame />Calculadora de Gasto Energético</CardTitle>
-              <CardDescription>Estima las calorías quemadas durante el ejercicio.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Ejercicio</Label>
-                  <Select
-                    onValueChange={(value) => setSelectedActivity(activities.find(a => a.name === value))}
-                    defaultValue={selectedActivity?.name}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecciona ejercicio" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {activities.map(activity => (
-                        <SelectItem key={activity.name} value={activity.name}>
-                          {activity.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="duration">Duración (minutos)</Label>
-                  <Input
-                    id="duration"
-                    name="duration"
-                    type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(Number(e.target.value))}
-                  />
-                </div>
-              </div>
-              {burnedCalories !== null && (
-                <div className="p-4 rounded-md border bg-secondary/50 text-center">
-                  <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Calorías Quemadas Estimadas</h3>
-                  <p className="text-4xl font-black text-primary tracking-tighter">{burnedCalories} <span className="text-2xl text-muted-foreground">kcal</span></p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 font-black tracking-tighter"><HeartPulse/>% de Grasa Corporal</CardTitle>
-                <CardDescription>Estima tu composición corporal.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div>
-                    <Label>Método de Cálculo</Label>
-                    <RadioGroup defaultValue="navy" value={bodyFatMethod} onValueChange={(value: 'navy' | 'bmi') => setBodyFatMethod(value)} className="mt-2">
-                        <div className="flex items-center space-x-4">
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="navy" id="navy" />
-                                <Label htmlFor="navy">Método Navy</Label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <RadioGroupItem value="bmi" id="bmi" />
-                                <Label htmlFor="bmi">Basado en IMC</Label>
-                            </div>
-                        </div>
-                    </RadioGroup>
-                </div>
-
-                {bodyFatMethod === 'navy' && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="waist">Cintura (cm)</Label>
-                            <Input id="waist" name="waist" type="number" value={measurements.waist} onChange={handleMeasurementChange} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="neck">Cuello (cm)</Label>
-                            <Input id="neck" name="neck" type="number" value={measurements.neck} onChange={handleMeasurementChange} />
-                        </div>
-                        {biometrics.gender === 'female' && (
-                            <div className="space-y-2">
-                                <Label htmlFor="hip">Cadera (cm)</Label>
-                                <Input id="hip" name="hip" type="number" value={measurements.hip} onChange={handleMeasurementChange} />
-                            </div>
-                        )}
+                  <div>
+                    <h3 className="text-lg font-bold tracking-tight mb-4">Macros de Combate</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="p-4 rounded-md border">
+                        <h4 className="text-muted-foreground">Proteína</h4>
+                        <p className="text-3xl font-black tracking-tighter">{macros?.protein ?? '...'}g</p>
+                        <p className="text-xs text-muted-foreground">2.2g / kg de peso</p>
+                      </div>
+                      <div className="p-4 rounded-md border">
+                        <h4 className="text-muted-foreground">Grasas</h4>
+                        <p className="text-3xl font-black tracking-tighter">{macros?.fat ?? '...'}g</p>
+                         <p className="text-xs text-muted-foreground">0.9g / kg de peso</p>
+                      </div>
+                       <div className="p-4 rounded-md border">
+                        <h4 className="text-muted-foreground">Carbohidratos</h4>
+                        <p className="text-3xl font-black tracking-tighter">{macros?.carbs ?? '...'}g</p>
+                         <p className="text-xs text-muted-foreground">Energía explosiva</p>
+                      </div>
                     </div>
-                )}
+                  </div>
 
-                {bodyFat && (
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="gasto">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 font-black tracking-tighter"><Flame />Calculadora de Gasto Energético</CardTitle>
+                  <CardDescription>Estima las calorías quemadas durante el ejercicio.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Ejercicio</Label>
+                      <Select
+                        onValueChange={(value) => setSelectedActivity(activities.find(a => a.name === value))}
+                        defaultValue={selectedActivity?.name}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecciona ejercicio" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {activities.map(activity => (
+                            <SelectItem key={activity.name} value={activity.name}>
+                              {activity.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="duration">Duración (minutos)</Label>
+                      <Input
+                        id="duration"
+                        name="duration"
+                        type="number"
+                        value={duration}
+                        onChange={(e) => setDuration(Number(e.target.value))}
+                      />
+                    </div>
+                  </div>
+                  {burnedCalories !== null && (
                     <div className="p-4 rounded-md border bg-secondary/50 text-center">
-                        <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Grasa Corporal Estimada</h3>
-                        <p className="text-4xl font-black text-primary tracking-tighter">{bodyFat.percentage}% <span className="text-2xl text-muted-foreground capitalize">{bodyFat.category}</span></p>
+                      <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Calorías Quemadas Estimadas</h3>
+                      <p className="text-4xl font-black text-primary tracking-tighter">{burnedCalories} <span className="text-2xl text-muted-foreground">kcal</span></p>
                     </div>
-                )}
-            </CardContent>
-          </Card>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="grasa">
+               <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2 font-black tracking-tighter"><HeartPulse/>% de Grasa Corporal</CardTitle>
+                    <CardDescription>Estima tu composición corporal.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div>
+                        <Label>Método de Cálculo</Label>
+                        <RadioGroup defaultValue="navy" value={bodyFatMethod} onValueChange={(value: 'navy' | 'bmi') => setBodyFatMethod(value)} className="mt-2">
+                            <div className="flex items-center space-x-4">
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="navy" id="navy" />
+                                    <Label htmlFor="navy">Método Navy</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <RadioGroupItem value="bmi" id="bmi" />
+                                    <Label htmlFor="bmi">Basado en IMC</Label>
+                                </div>
+                            </div>
+                        </RadioGroup>
+                    </div>
+
+                    {bodyFatMethod === 'navy' && (
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="waist">Cintura (cm)</Label>
+                                <Input id="waist" name="waist" type="number" value={measurements.waist} onChange={handleMeasurementChange} />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="neck">Cuello (cm)</Label>
+                                <Input id="neck" name="neck" type="number" value={measurements.neck} onChange={handleMeasurementChange} />
+                            </div>
+                            {biometrics.gender === 'female' && (
+                                <div className="space-y-2">
+                                    <Label htmlFor="hip">Cadera (cm)</Label>
+                                    <Input id="hip" name="hip" type="number" value={measurements.hip} onChange={handleMeasurementChange} />
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {bodyFat && (
+                        <div className="p-4 rounded-md border bg-secondary/50 text-center">
+                            <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Grasa Corporal Estimada</h3>
+                            <p className="text-4xl font-black text-primary tracking-tighter">{bodyFat.percentage}% <span className="text-2xl text-muted-foreground capitalize">{bodyFat.category}</span></p>
+                        </div>
+                    )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </div>
