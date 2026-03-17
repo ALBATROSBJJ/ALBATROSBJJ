@@ -269,15 +269,19 @@ export default function DashboardPage() {
       
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle className="font-black tracking-tighter">Órdenes del Coach</CardTitle>
-            <CardDescription>Análisis táctico de tu semana.</CardDescription>
+            <CardTitle className="font-black tracking-tighter">Instrucciones Generales</CardTitle>
+            <CardDescription>Guía para optimizar tu rendimiento y disciplina.</CardDescription>
           </CardHeader>
           <CardContent>
-            <blockquote className="border-l-2 border-primary pl-4">
-              <p className="text-sm text-muted-foreground">
-                "Balance energético positivo en 5 de 7 días. Estás en fase de carga, bien. Pero el martes te quedaste corto. Eso es un error de novato. En el campamento, cada caloría cuenta. No quiero volver a ver números rojos en tu gasto. La proteína está al 95%, aceptable, pero no perfecto. La perfección gana peleas. Ajusta el timing de tu batido post-entreno del martes. Quiero 100% de adherencia la próxima semana. ¿Entendido?"
-              </p>
-            </blockquote>
+            <ul className="space-y-2 text-sm text-muted-foreground list-disc pl-5">
+                <li>Mantén un balance energético acorde a tus objetivos durante toda la semana. Evita variaciones grandes entre días.</li>
+                <li>Asegura una ingesta adecuada de proteína diaria para favorecer la recuperación y el rendimiento.</li>
+                <li>Procura respetar los horarios de comida, especialmente después del entrenamiento.</li>
+                <li>Hidrátate correctamente a lo largo del día.</li>
+                <li>Da prioridad a alimentos de buena calidad nutricional y evita omitir comidas.</li>
+                <li>Mantén constancia y registra tus alimentos para un mejor seguimiento.</li>
+                <li>El progreso depende de la disciplina diaria. Enfócate en mejorar pequeños detalles semana a semana.</li>
+            </ul>
           </CardContent>
         </Card>
       </div>
