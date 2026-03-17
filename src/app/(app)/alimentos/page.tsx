@@ -56,8 +56,46 @@ export default function AlimentosPage() {
         <p className="text-muted-foreground">Busca en el arsenal nutricional y suma tus calorías.</p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
+      <div className="flex flex-col gap-8">
+        <div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Contador de Calorías</CardTitle>
+              <CardDescription>Las calorías de los alimentos que selecciones.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 min-h-[100px]">
+              {selectedFoods.length > 0 ? (
+                <div className="space-y-2">
+                  {selectedFoods.map((food, index) => (
+                    <div key={index} className="flex justify-between items-center text-sm p-2 rounded-md bg-secondary/50">
+                      <span>{food.nombre}</span>
+                      <span className="font-mono">{food.calorias} kcal</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-sm text-muted-foreground pt-4">
+                  Añade alimentos para empezar a contar.
+                </div>
+              )}
+            </CardContent>
+            <Separator />
+            <CardFooter className="flex-col items-stretch pt-4 space-y-4">
+               <div className="flex justify-between items-baseline">
+                <span className="text-lg font-bold">Total:</span>
+                <span className="text-2xl font-black text-primary tracking-tighter">{totalCalories} kcal</span>
+              </div>
+              {selectedFoods.length > 0 && (
+                <Button variant="destructive" onClick={handleClearFoods} className="w-full">
+                  <XCircle className="mr-2 h-4 w-4" />
+                  Limpiar
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
+        </div>
+
+        <div>
           <Card>
             <CardHeader>
               <CardTitle>Buscador de Munición</CardTitle>
@@ -122,44 +160,6 @@ export default function AlimentosPage() {
                 )}
               </div>}
             </CardContent>
-          </Card>
-        </div>
-
-        <div className="lg:col-span-1">
-          <Card className="sticky top-8">
-            <CardHeader>
-              <CardTitle>Contador de Calorías</CardTitle>
-              <CardDescription>Las calorías de los alimentos que selecciones.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 min-h-[100px]">
-              {selectedFoods.length > 0 ? (
-                <div className="space-y-2">
-                  {selectedFoods.map((food, index) => (
-                    <div key={index} className="flex justify-between items-center text-sm p-2 rounded-md bg-secondary/50">
-                      <span>{food.nombre}</span>
-                      <span className="font-mono">{food.calorias} kcal</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center text-sm text-muted-foreground pt-4">
-                  Añade alimentos para empezar a contar.
-                </div>
-              )}
-            </CardContent>
-            <Separator />
-            <CardFooter className="flex-col items-stretch pt-4 space-y-4">
-               <div className="flex justify-between items-baseline">
-                <span className="text-lg font-bold">Total:</span>
-                <span className="text-2xl font-black text-primary tracking-tighter">{totalCalories} kcal</span>
-              </div>
-              {selectedFoods.length > 0 && (
-                <Button variant="destructive" onClick={handleClearFoods} className="w-full">
-                  <XCircle className="mr-2 h-4 w-4" />
-                  Limpiar
-                </Button>
-              )}
-            </CardFooter>
           </Card>
         </div>
       </div>
