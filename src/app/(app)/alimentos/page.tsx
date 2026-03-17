@@ -1,8 +1,40 @@
+"use client";
+
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
+
+// Based on docs/backend.json
+type FoodItem = {
+  id: string;
+  name: string;
+  category: string;
+  caloriesPer100g: number;
+  proteinPer100g: number;
+  fatPer100g: number;
+  carbohydratesPer100g: number;
+};
 
 export default function AlimentosPage() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const firestore = useFirestore();
+
+  const alimentosQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'alimentos'));
+  }, [firestore]);
+
+  const { data: alimentos, isLoading } = useCollection<FoodItem>(alimentosQuery);
+
+  const filteredAlimentos = alimentos?.filter(alimento =>
+    alimento.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="p-4 md:p-8 space-y-8">
       <header>
@@ -18,10 +50,55 @@ export default function AlimentosPage() {
         <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input placeholder="Buscar alimento (ej. 'Pechuga de pollo', 'Arroz integral'...)" className="pl-10" />
+            <Input
+              placeholder="Buscar alimento (ej. 'Pechuga de pollo', 'Arroz integral'...)"
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
-          <div className="mt-6 border rounded-md min-h-[400px] flex items-center justify-center bg-background/50">
-            <p className="text-muted-foreground">Los resultados de la búsqueda aparecerán aquí.</p>
+          <div className="mt-6 border rounded-md">
+            {isLoading ? (
+              <div className="space-y-4 p-4">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Alimento</TableHead>
+                    <TableHead>Categoría</TableHead>
+                    <TableHead className="text-right">Calorías</TableHead>
+                    <TableHead className="text-right">Proteína</TableHead>
+                    <TableHead className="text-right">Grasas</TableHead>
+                    <TableHead className="text-right">Carbs</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredAlimentos && filteredAlimentos.length > 0 ? (
+                    filteredAlimentos.map(item => (
+                      <TableRow key={item.id}>
+                        <TableCell className="font-medium">{item.name}</TableCell>
+                        <TableCell>{item.category}</TableCell>
+                        <TableCell className="text-right">{item.caloriesPer100g} kcal</TableCell>
+                        <TableCell className="text-right">{item.proteinPer100g}g</TableCell>
+                        <TableCell className="text-right">{item.fatPer100g}g</TableCell>
+                        <TableCell className="text-right">{item.carbohydratesPer100g}g</TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center h-24">
+                        {alimentos === null && !isLoading ? "La base de datos puede estar vacía o no se pudo cargar." : "No se encontraron alimentos."}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
           </div>
         </CardContent>
       </Card>

@@ -1,8 +1,9 @@
 export const firebaseConfig = {
-  "projectId": "studio-7246712953-d1134",
-  "appId": "1:370604842001:web:ce9019ba6bf907cd5865b0",
-  "apiKey": "AIzaSyDwP9wWyogdTgl1oM6RTvvuxT8Of4pWEuo",
-  "authDomain": "studio-7246712953-d1134.firebaseapp.com",
-  "measurementId": "",
-  "messagingSenderId": "370604842001"
+  "apiKey": "AIzaSyCvwaqwP5gVostBRCzNhLzHJrkMbqDoYuw",
+  "authDomain": "albatros-5de2d.firebaseapp.com",
+  "databaseURL": "https://albatros-5de2d-default-rtdb.firebaseio.com",
+  "projectId": "albatros-5de2d",
+  "storageBucket": "albatros-5de2d.appspot.com",
+  "messagingSenderId": "893648271452",
+  "appId": "1:893648271452:web:4a7f6cbb7d9c70fa960e99"
 };
