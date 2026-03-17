@@ -84,21 +84,20 @@ export default function AlimentosPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredAlimentos && filteredAlimentos.length > 0 ? (
+                  {searchTerm && filteredAlimentos && filteredAlimentos.length > 0 && (
                     filteredAlimentos.map(item => (
                       <TableRow key={item.id}>
                         <TableCell className="font-medium">{item.name}</TableCell>
                         <TableCell className="text-right">{item.caloriesPer100g} kcal</TableCell>
                       </TableRow>
                     ))
-                  ) : (
-                     !isDataEmpty && searchTerm && (
+                  )}
+                  {searchTerm && (!filteredAlimentos || filteredAlimentos.length === 0) && !isLoading && (
                      <TableRow>
                       <TableCell colSpan={2} className="text-center h-24">
                         No se encontraron alimentos con ese nombre.
                       </TableCell>
                     </TableRow>
-                    )
                   )}
                 </TableBody>
               </Table>
