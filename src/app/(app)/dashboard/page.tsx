@@ -173,7 +173,7 @@ export default function DashboardPage() {
         <p className="text-muted-foreground">Análisis de la semana: prepárate para el combate.</p>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
         <Card className="lg:col-span-1">
           <CardHeader>
             <CardTitle className="font-black tracking-tighter">Adherencia Diaria</CardTitle>
@@ -230,10 +230,8 @@ export default function DashboardPage() {
             </ChartContainer>
           </CardContent>
         </Card>
-      </div>
-
-       <div className="grid gap-6 md:grid-cols-1">
-        <Card>
+      
+        <Card className="lg:col-span-3">
           <CardHeader>
             <CardTitle className="font-black tracking-tighter">Órdenes del Coach</CardTitle>
             <CardDescription>Análisis táctico de tu semana.</CardDescription>
