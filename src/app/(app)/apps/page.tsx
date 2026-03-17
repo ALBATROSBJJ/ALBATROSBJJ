@@ -15,18 +15,18 @@ export default function AppsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Tu Aplicación Publicada</CardTitle>
-          <CardDescription>Accede a tu aplicación desde aquí.</CardDescription>
+          <CardTitle>Descarga la APK</CardTitle>
+          <CardDescription>Descarga el archivo de instalación para Android.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="border rounded-md min-h-[500px] flex flex-col items-center justify-center bg-background/50 text-center gap-4 p-4">
             <p className="text-muted-foreground max-w-md">
-              He añadido un enlace a tu aplicación. Ten en cuenta que esta es una aplicación web, por lo que no se descarga como un archivo APK (que es para Android). Puedes visitarla directamente en tu navegador.
+              Usa este botón para descargar el archivo APK de la aplicación para dispositivos Android.
             </p>
             <Button asChild className="font-bold">
-              <Link href="https://radiant-souffle-a7fe2d.netlify.app" target="_blank" rel="noopener noreferrer">
+              <Link href="https://drive.google.com/file/d/15x9Bx9C9E9Up1k_j-qjU-bc7tNC6IThT/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
                 <Download className="mr-2 h-4 w-4" />
-                Visitar App
+                Descargar APK
               </Link>
             </Button>
           </div>
