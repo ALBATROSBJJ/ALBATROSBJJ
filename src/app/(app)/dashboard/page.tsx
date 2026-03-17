@@ -4,12 +4,15 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Toolti
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
 import { Progress } from "@/components/ui/progress"
+import { Separator } from "@/components/ui/separator"
+import React from "react"
 
-const weeklyData = {
-  calories: { consumed: 18500, target: 21000 },
-  protein: { consumed: 1200, target: 1260 },
-  carbs: { consumed: 2000, target: 2200 },
-  fats: { consumed: 600, target: 630 },
+type Biometrics = {
+  gender: 'male' | 'female';
+  weight: number;
+  height: number;
+  age: number;
+  activityLevel: number;
 };
 
 const energyBalanceData = [
@@ -21,6 +24,13 @@ const energyBalanceData = [
   { day: 'Sáb', intake: 3500, expenditure: 2200, surplus: 1300 },
   { day: 'Dom', intake: 2400, expenditure: 1800, surplus: 600 },
 ];
+
+const weeklyConsumed = {
+  calories: 18500,
+  protein: 1200,
+  carbs: 2000,
+  fats: 600,
+};
 
 const chartConfig = {
   intake: {
@@ -34,8 +44,58 @@ const chartConfig = {
 }
 
 export default function DashboardPage() {
+  const [biometrics] = React.useState<Biometrics>({
+    gender: 'male',
+    weight: 84,
+    height: 180,
+    age: 28,
+    activityLevel: 1.55,
+  });
+  const [goal] = React.useState<'maintain' | 'lose' | 'gain'>('maintain');
+  const [weeklyTargets, setWeeklyTargets] = React.useState({
+    calories: 21000,
+    protein: 1260,
+    carbs: 2200,
+    fats: 630,
+  });
+
+  const calculateTargets = React.useCallback(() => {
+    let bmr;
+    if (biometrics.gender === 'male') {
+      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) + 5;
+    } else {
+      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) - 161;
+    }
+
+    const tdee = bmr * biometrics.activityLevel;
+    
+    let targetCalories = tdee;
+    if (goal === 'lose') {
+      targetCalories *= 0.85;
+    } else if (goal === 'gain') {
+      targetCalories *= 1.15;
+    }
+    
+    const proteinG = biometrics.weight * 2.2;
+    const fatG = biometrics.weight * 0.9;
+    const carbsKcal = targetCalories - (proteinG * 4) - (fatG * 9);
+    const carbsG = carbsKcal / 4;
+    
+    setWeeklyTargets({
+      calories: Math.round(targetCalories * 7),
+      protein: Math.round(proteinG * 7),
+      fats: Math.round(fatG * 7),
+      carbs: Math.round(carbsG * 7),
+    });
+  }, [biometrics, goal]);
+
+  React.useEffect(() => {
+    calculateTargets();
+  }, [calculateTargets]);
+
   const renderMacroProgress = (key: 'calories' | 'protein' | 'carbs' | 'fats', title: string) => {
-    const { consumed, target } = weeklyData[key];
+    const consumed = weeklyConsumed[key];
+    const target = weeklyTargets[key];
     const percentage = (consumed / target) * 100;
     return (
       <div>
@@ -45,10 +105,27 @@ export default function DashboardPage() {
             <span className="font-bold text-foreground">{consumed.toLocaleString()}</span> / {target.toLocaleString()}
           </p>
         </div>
-        <Progress value={percentage} className="h-2" indicatorClassName="bg-primary" />
+        <Progress value={percentage} className="h-2" />
       </div>
     )
   }
+
+  const DailyCalorieSummary = () => (
+    <div className="mt-6">
+      <h4 className="text-sm font-medium text-muted-foreground mb-3">Resumen Diario de Calorías</h4>
+      <div className="space-y-2 text-sm">
+        {energyBalanceData.map(item => (
+          <div key={item.day} className="flex justify-between items-center">
+            <span className="font-medium">{item.day}</span>
+            <div className="flex gap-4 font-mono tracking-tighter">
+              <span>Ingesta: <span className="font-bold text-foreground">{item.intake}</span></span>
+              <span>Gasto: <span className="font-bold text-foreground">{item.expenditure}</span></span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 
   return (
     <div className="p-4 md:p-8 space-y-8">
@@ -63,11 +140,15 @@ export default function DashboardPage() {
             <CardTitle className="font-black tracking-tighter">Adherencia Semanal</CardTitle>
             <CardDescription>Cumplimiento de macros y calorías.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
-            {renderMacroProgress('calories', 'Calorías (kcal)')}
-            {renderMacroProgress('protein', 'Proteína (g)')}
-            {renderMacroProgress('carbs', 'Carbohidratos (g)')}
-            {renderMacroProgress('fats', 'Grasas (g)')}
+          <CardContent>
+            <div className="space-y-6">
+              {renderMacroProgress('calories', 'Calorías (kcal)')}
+              {renderMacroProgress('protein', 'Proteína (g)')}
+              {renderMacroProgress('carbs', 'Carbohidratos (g)')}
+              {renderMacroProgress('fats', 'Grasas (g)')}
+            </div>
+            <Separator className="my-6"/>
+            <DailyCalorieSummary />
           </CardContent>
         </Card>
 
@@ -77,7 +158,7 @@ export default function DashboardPage() {
             <CardDescription>Ingesta vs. Gasto calórico.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-64 w-full">
+            <ChartContainer config={chartConfig} className="h-[280px] w-full">
               <ResponsiveContainer>
                 <BarChart data={energyBalanceData} margin={{ top: 20, right: 0, left: -20, bottom: 5 }}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
