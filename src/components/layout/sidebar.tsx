@@ -52,7 +52,7 @@ export function AppSidebar() {
           <SidebarMenu>
             {menuItems.map((item) => (
               <SidebarMenuItem key={item.href}>
-                <Link href={item.href} legacyBehavior passHref>
+                <Link href={item.href}>
                   <SidebarMenuButton
                     isActive={isActive(item.href)}
                     tooltip={{ children: item.label }}
@@ -70,7 +70,7 @@ export function AppSidebar() {
          <SidebarGroup>
             <SidebarMenu>
                 <SidebarMenuItem>
-                    <Link href={profileItem.href} legacyBehavior passHref>
+                    <Link href={profileItem.href}>
                         <SidebarMenuButton isActive={isActive(profileItem.href)} tooltip={{ children: profileItem.label }}>
                             <profileItem.icon />
                             <span>{profileItem.label}</span>
@@ -78,7 +78,7 @@ export function AppSidebar() {
                     </Link>
                 </SidebarMenuItem>
                 <SidebarMenuItem>
-                    <Link href={logoutItem.href} legacyBehavior passHref>
+                    <Link href={logoutItem.href}>
                         <SidebarMenuButton tooltip={{ children: logoutItem.label }}>
                             <logoutItem.icon />
                             <span>{logoutItem.label}</span>
