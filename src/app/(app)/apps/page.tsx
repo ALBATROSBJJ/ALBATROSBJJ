@@ -1,4 +1,9 @@
+'use client';
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Download } from "lucide-react";
 
 export default function AppsPage() {
   return (
@@ -10,12 +15,20 @@ export default function AppsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Marketplace de Apps</CardTitle>
-          <CardDescription>Próximamente: Conecta nuevas herramientas para potenciar tu rendimiento.</CardDescription>
+          <CardTitle>Tu Aplicación Publicada</CardTitle>
+          <CardDescription>Accede a tu aplicación desde aquí.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-md min-h-[500px] flex items-center justify-center bg-background/50">
-            <p className="text-muted-foreground">Este espacio estará dedicado a futuras integraciones y aplicaciones.</p>
+          <div className="border rounded-md min-h-[500px] flex flex-col items-center justify-center bg-background/50 text-center gap-4 p-4">
+            <p className="text-muted-foreground max-w-md">
+              He añadido un enlace a tu aplicación. Ten en cuenta que esta es una aplicación web, por lo que no se descarga como un archivo APK (que es para Android). Puedes visitarla directamente en tu navegador.
+            </p>
+            <Button asChild className="font-bold">
+              <Link href="https://radiant-souffle-a7fe2d.netlify.app" target="_blank" rel="noopener noreferrer">
+                <Download className="mr-2 h-4 w-4" />
+                Visitar App
+              </Link>
+            </Button>
           </div>
         </CardContent>
       </Card>
