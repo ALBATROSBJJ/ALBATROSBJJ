@@ -84,7 +84,7 @@ export default function AlimentosPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {searchTerm && filteredAlimentos && filteredAlimentos.length > 0 && (
+                  {filteredAlimentos && filteredAlimentos.length > 0 && (
                     filteredAlimentos.map(item => (
                       <TableRow key={item.id}>
                         <TableCell className="font-medium">{item.name}</TableCell>
