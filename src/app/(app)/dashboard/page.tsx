@@ -1,8 +1,8 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip, ReferenceLine, Cell } from "recharts"
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
+import { ChartContainer, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import React from "react"
@@ -28,14 +28,11 @@ const energyBalanceData = [
 ];
 
 const chartConfig = {
-  surplus: {
-    label: "Balance Neto",
-  },
-  intake: {
+  superavit: {
     label: "Superávit",
     color: "hsl(var(--primary))",
   },
-  expenditure: {
+  deficit: {
     label: "Déficit",
     color: "hsl(var(--destructive))",
   },
@@ -115,6 +112,12 @@ export default function DashboardPage() {
 
   const targetNetBalance = Math.round(dailyTargets.calories - tdee);
 
+  const transformedEnergyBalanceData = energyBalanceData.map(d => ({
+    ...d,
+    superavit: d.surplus > 0 ? d.surplus : 0,
+    deficit: d.surplus < 0 ? d.surplus : 0,
+  }));
+
   const renderMacroProgress = (key: 'protein' | 'carbs' | 'fats', title: string) => {
     const consumed = dailyConsumed[key as keyof typeof dailyConsumed];
     const target = dailyTargets[key as keyof typeof dailyTargets];
@@ -164,6 +167,29 @@ export default function DashboardPage() {
       </div>
     );
   };
+  
+  const CustomTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+        const data = payload[0].payload;
+        const netBalance = data.surplus;
+        const colorClass = netBalance >= 0 ? 'text-primary' : 'text-destructive';
+
+        return (
+        <div className="p-3 bg-card border rounded-md shadow-lg text-sm">
+            <p className="font-bold mb-2">{label}</p>
+            <div className="space-y-1">
+            <p>Ingesta: <span className="font-mono font-medium">{data.intake.toLocaleString()} kcal</span></p>
+            <p>Gasto: <span className="font-mono font-medium">{data.expenditure.toLocaleString()} kcal</span></p>
+            <p className={`font-bold ${colorClass}`}>
+                Balance Neto: 
+                <span className="font-mono font-medium"> {netBalance.toLocaleString()} kcal</span>
+            </p>
+            </div>
+        </div>
+        );
+    }
+    return null;
+  };
 
 
   return (
@@ -174,62 +200,61 @@ export default function DashboardPage() {
       </header>
 
       <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="font-black tracking-tighter">Adherencia Diaria</CardTitle>
-            <CardDescription>Cumplimiento de objetivos para hoy.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              <DailyCalorieSummary />
-              <Separator />
-              <div>
-                <h3 className="text-lg font-bold tracking-tight mb-4">Macros de Combate</h3>
-                <div className="space-y-4">
-                    {renderMacroProgress('protein', 'Proteína (g)')}
-                    {renderMacroProgress('carbs', 'Carbohidratos (g)')}
-                    {renderMacroProgress('fats', 'Grasas (g)')}
+        <div className="grid gap-6 lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-black tracking-tighter">Adherencia Diaria</CardTitle>
+              <CardDescription>Cumplimiento de objetivos para hoy.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-6">
+                <DailyCalorieSummary />
+                <Separator />
+                <div>
+                  <h3 className="text-lg font-bold tracking-tight mb-4">Macros de Combate</h3>
+                  <div className="space-y-4">
+                      {renderMacroProgress('protein', 'Proteína (g)')}
+                      {renderMacroProgress('carbs', 'Carbohidratos (g)')}
+                      {renderMacroProgress('fats', 'Grasas (g)')}
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="font-black tracking-tighter">Balance Neto Semanal</CardTitle>
-            <CardDescription>Balance calórico neto (ingesta - gasto) de los últimos 7 días.</CardDescription>
-          </CardHeader>
-          <CardContent>
-             <ChartContainer config={chartConfig} className="h-[280px] w-full">
-              <ResponsiveContainer>
-                <BarChart data={energyBalanceData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }} barGap={4}>
-                  <CartesianGrid vertical={false} strokeDasharray="3 3" />
-                  <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={8} unit="kcal" />
-                  <Tooltip
-                    cursor={false}
-                    content={<ChartTooltipContent
-                      formatter={(value) => `${value.toLocaleString()} kcal`}
-                      indicator="dot"
-                    />}
-                  />
-                  <ReferenceLine 
-                    y={targetNetBalance} 
-                    label={{ value: 'Meta Neta', position: 'insideTopRight', fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
-                    stroke="hsl(var(--ring))" 
-                    strokeDasharray="2 6" 
-                  />
-                  <Bar dataKey="surplus" radius={4}>
-                    {energyBalanceData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.surplus >= 0 ? "var(--color-intake)" : "var(--color-expenditure)"} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </ChartContainer>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="grid gap-6 lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="font-black tracking-tighter">Balance Neto Semanal</CardTitle>
+              <CardDescription>Balance calórico neto (ingesta - gasto) de los últimos 7 días.</CardDescription>
+            </CardHeader>
+            <CardContent>
+               <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                <ResponsiveContainer>
+                  <BarChart data={transformedEnergyBalanceData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }} barGap={4}>
+                    <CartesianGrid vertical={false} strokeDasharray="3 3" />
+                    <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} />
+                    <YAxis tickLine={false} axisLine={false} tickMargin={8} unit="kcal" />
+                    <Tooltip
+                      cursor={false}
+                      content={<CustomTooltip />}
+                    />
+                     <ChartLegend content={<ChartLegendContent />} />
+                    <ReferenceLine 
+                      y={targetNetBalance} 
+                      label={{ value: 'Meta Neta', position: 'insideTopRight', fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                      stroke="hsl(var(--ring))" 
+                      strokeDasharray="2 6" 
+                    />
+                    <Bar dataKey="superavit" stackId="balance" fill="var(--color-superavit)" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="deficit" stackId="balance" fill="var(--color-deficit)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </div>
       
         <Card className="lg:col-span-3">
           <CardHeader>
