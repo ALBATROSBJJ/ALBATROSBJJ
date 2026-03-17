@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -19,7 +20,7 @@ type UserProfile = {
   email: string;
   firstName: string;
   lastName: string;
-  dateOfBirth: string;
+  age: number;
   gender: string;
   heightCm: number;
   weightKg: number;
@@ -38,7 +39,7 @@ export default function PerfilPage() {
     email: '',
     weightKg: 0,
     heightCm: 0,
-    dateOfBirth: '',
+    age: 0,
     gender: 'male',
   });
   const [isSaving, setIsSaving] = useState(false);
@@ -58,7 +59,7 @@ export default function PerfilPage() {
         email: userProfile.email || '',
         weightKg: userProfile.weightKg || 0,
         heightCm: userProfile.heightCm || 0,
-        dateOfBirth: userProfile.dateOfBirth || '',
+        age: userProfile.age || 0,
         gender: userProfile.gender || 'male',
       });
     }
@@ -134,24 +135,6 @@ export default function PerfilPage() {
     );
   };
 
-  const getAge = (dateString: string) => {
-    if (!dateString) return 0;
-    try {
-      const today = new Date();
-      const birthDate = new Date(dateString);
-      if (isNaN(birthDate.getTime())) return 0;
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-          age--;
-      }
-      return age;
-    } catch (e) {
-      return 0;
-    }
-  }
-
-  const age = getAge(formData.dateOfBirth);
   const weightCategory = getUfcWeightCategory(formData.weightKg || 0);
 
   if (isProfileLoading) {
@@ -241,8 +224,8 @@ export default function PerfilPage() {
                   <Input id="heightCm" type="number" value={formData.heightCm} onChange={handleNumberInputChange} />
                 </div>
                  <div className="space-y-2">
-                  <Label htmlFor="dateOfBirth">Fecha de Nacimiento</Label>
-                  <Input id="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleInputChange} />
+                  <Label htmlFor="age">Edad</Label>
+                  <Input id="age" type="number" value={formData.age} onChange={handleNumberInputChange} />
                 </div>
               </div>
 
@@ -286,7 +269,7 @@ export default function PerfilPage() {
             <CardContent className="space-y-4">
                 <div className="p-4 rounded-md border text-center">
                     <p className="text-sm text-muted-foreground">Edad</p>
-                    <p className="text-3xl font-black tracking-tighter">{age > 0 ? age : '-'}</p>
+                    <p className="text-3xl font-black tracking-tighter">{formData.age > 0 ? formData.age : '-'}</p>
                 </div>
                <Button variant="outline" className="w-full" onClick={handlePasswordReset}>Cambiar Contraseña</Button>
             </CardContent>

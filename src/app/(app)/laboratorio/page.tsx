@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from 'react';
@@ -9,9 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { User, Weight, Ruler, Cake, Activity, Target, Flame, HeartPulse, PlusCircle } from 'lucide-react';
 import { activities, type Activity as MetActivity } from '@/lib/met-values';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useDailyData, type Biometrics, type Goal } from '@/context/DailyDataProvider';
+import { useDailyData } from '@/context/DailyDataProvider';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function LaboratorioPage() {
   const {
@@ -19,18 +21,22 @@ export default function LaboratorioPage() {
     setBiometrics,
     goal,
     setGoal,
-    setDailyTargets,
+    dailyTargets,
+    saveData,
+    isDataLoading,
     setExpenditureCalories
   } = useDailyData();
 
+  const { toast } = useToast();
+  
   const [bmr, setBmr] = React.useState<number | null>(null);
   const [tdee, setTdee] = React.useState<number | null>(null);
   const [macros, setMacros] = React.useState<{ protein: number, fat: number, carbs: number } | null>(null);
+  const [isCalculating, setIsCalculating] = React.useState(false);
 
   const [selectedActivity, setSelectedActivity] = React.useState<MetActivity | undefined>(activities[0]);
   const [duration, setDuration] = React.useState(30);
   const [burnedCalories, setBurnedCalories] = React.useState<number | null>(null);
-  const { toast } = useToast();
 
   const [bodyFatMethod, setBodyFatMethod] = React.useState<'navy' | 'bmi'>('navy');
   const [measurements, setMeasurements] = React.useState({
@@ -39,6 +45,24 @@ export default function LaboratorioPage() {
     hip: 95,
   });
   const [bodyFat, setBodyFat] = React.useState<{percentage: number, category: string} | null>(null);
+
+  React.useEffect(() => {
+    if (!isDataLoading) {
+        setTdee(dailyTargets.calories);
+        setMacros({
+            protein: dailyTargets.protein,
+            fat: dailyTargets.fats,
+            carbs: dailyTargets.carbs
+        });
+        let calculatedBmr;
+        if (biometrics.gender === 'male') {
+          calculatedBmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) + 5;
+        } else {
+          calculatedBmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) - 161;
+        }
+        setBmr(Math.round(calculatedBmr));
+    }
+  }, [dailyTargets, biometrics, isDataLoading]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -50,17 +74,15 @@ export default function LaboratorioPage() {
     setMeasurements(prev => ({ ...prev, [name]: Number(value) }));
   };
 
-  const calculateAll = React.useCallback(() => {
-    // BMR (Mifflin-St Jeor)
+  const handleCalculateAndSave = () => {
+    setIsCalculating(true);
     let calculatedBmr;
     if (biometrics.gender === 'male') {
       calculatedBmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) + 5;
     } else {
       calculatedBmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) - 161;
     }
-    setBmr(Math.round(calculatedBmr));
 
-    // TDEE
     const calculatedTdee = calculatedBmr * biometrics.activityLevel;
     
     let targetCalories = calculatedTdee;
@@ -69,30 +91,39 @@ export default function LaboratorioPage() {
     } else if (goal === 'gain') {
       targetCalories *= 1.15; // 15% surplus
     }
-    setTdee(Math.round(targetCalories));
+    const finalTargetCalories = Math.round(targetCalories);
     
-    // Macros
     const proteinG = biometrics.weight * 2.2;
     const fatG = biometrics.weight * 0.9;
     const proteinKcal = proteinG * 4;
     const fatKcal = fatG * 9;
-    const carbsKcal = targetCalories - proteinKcal - fatKcal;
+    const carbsKcal = finalTargetCalories - proteinKcal - fatKcal;
     const carbsG = carbsKcal / 4;
     const calculatedMacros = {
       protein: Math.round(proteinG),
       fat: Math.round(fatG),
       carbs: Math.round(carbsG < 0 ? 0 : carbsG)
     };
-    setMacros(calculatedMacros);
 
-    setDailyTargets({
-        calories: Math.round(targetCalories),
-        protein: calculatedMacros.protein,
-        fats: calculatedMacros.fat,
-        carbs: calculatedMacros.carbs
+    const newDailyTargets = {
+      calories: finalTargetCalories,
+      protein: calculatedMacros.protein,
+      fats: calculatedMacros.fat,
+      carbs: calculatedMacros.carbs
+    };
+
+    saveData({
+      biometrics,
+      goal,
+      dailyTargets: newDailyTargets,
     });
-
-  }, [biometrics, goal, setDailyTargets]);
+    
+    toast({
+        title: "Datos Guardados",
+        description: "Tus nuevas metas han sido calculadas y guardadas en tu perfil.",
+    });
+    setIsCalculating(false);
+  };
 
   const calculateBurnedCalories = React.useCallback(() => {
     if (selectedActivity && biometrics.weight && duration > 0) {
@@ -158,10 +189,9 @@ export default function LaboratorioPage() {
   }, [biometrics, measurements, bodyFatMethod]);
 
   React.useEffect(() => {
-    calculateAll();
     calculateBurnedCalories();
     calculateBodyFat();
-  }, [calculateAll, calculateBurnedCalories, calculateBodyFat]);
+  }, [biometrics, measurements, goal, calculateBurnedCalories, calculateBodyFat]);
 
   return (
     <div className="p-4 md:p-8 space-y-8">
@@ -176,73 +206,90 @@ export default function LaboratorioPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-black tracking-tighter"><User/>Datos del Atleta</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <Label>Sexo</Label>
-                <RadioGroup defaultValue="male" value={biometrics.gender} onValueChange={(value: 'male' | 'female') => setBiometrics(prev => ({ ...prev, gender: value }))}>
-                  <div className="flex items-center space-x-4 mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="male" id="male" />
-                      <Label htmlFor="male">Masculino</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="female" id="female" />
-                      <Label htmlFor="female">Femenino</Label>
-                    </div>
+            <CardContent>
+              {isDataLoading ? (
+                 <div className="space-y-6">
+                    <div className="space-y-2"><Skeleton className="h-4 w-12" /><div className="flex gap-4"><Skeleton className="h-10 w-24" /><Skeleton className="h-10 w-24" /></div></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-24" /><div className="flex gap-4"><Skeleton className="h-10 w-24" /><Skeleton className="h-10 w-24" /><Skeleton className="h-10 w-24" /></div></div>
+                    <Skeleton className="h-10 w-full mt-4" />
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  <div>
+                    <Label>Sexo</Label>
+                    <RadioGroup defaultValue="male" value={biometrics.gender} onValueChange={(value: 'male' | 'female') => setBiometrics(prev => ({ ...prev, gender: value }))}>
+                      <div className="flex items-center space-x-4 mt-2">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="male" id="male" />
+                          <Label htmlFor="male">Masculino</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="female" id="female" />
+                          <Label htmlFor="female">Femenino</Label>
+                        </div>
+                      </div>
+                    </RadioGroup>
                   </div>
-                </RadioGroup>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="weight" className="flex items-center gap-2"><Weight className="h-4 w-4"/>Peso (kg)</Label>
-                <Input id="weight" name="weight" type="number" value={biometrics.weight} onChange={handleInputChange} />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="height" className="flex items-center gap-2"><Ruler className="h-4 w-4"/>Altura (cm)</Label>
-                <Input id="height" name="height" type="number" value={biometrics.height} onChange={handleInputChange} />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="age" className="flex items-center gap-2"><Cake className="h-4 w-4"/>Edad</Label>
-                <Input id="age" name="age" type="number" value={biometrics.age} onChange={handleInputChange} />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="activityLevel" className="flex items-center gap-2"><Activity className="h-4 w-4"/>Nivel de Actividad</Label>
-                 <Select value={String(biometrics.activityLevel)} onValueChange={(value) => setBiometrics(prev => ({ ...prev, activityLevel: Number(value) }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona nivel" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="1.2">Sedentario (oficina)</SelectItem>
-                    <SelectItem value="1.375">Ligero (1-3 días/sem)</SelectItem>
-                    <SelectItem value="1.55">Moderado (3-5 días/sem)</SelectItem>
-                    <SelectItem value="1.725">Intenso (6-7 días/sem)</SelectItem>
-                    <SelectItem value="1.9">Atleta (2x día)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="flex items-center gap-2"><Target className="h-4 w-4"/>Objetivo</Label>
-                <RadioGroup defaultValue="maintain" value={goal} onValueChange={(value: 'maintain' | 'lose' | 'gain') => setGoal(value)}>
-                  <div className="flex items-center space-x-4 mt-2">
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="lose" id="lose" />
-                      <Label htmlFor="lose">Bajar Peso</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="maintain" id="maintain" />
-                      <Label htmlFor="maintain">Mantener</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="gain" id="gain" />
-                      <Label htmlFor="gain">Subir Masa</Label>
-                    </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="weight" className="flex items-center gap-2"><Weight className="h-4 w-4"/>Peso (kg)</Label>
+                    <Input id="weight" name="weight" type="number" value={biometrics.weight} onChange={handleInputChange} />
                   </div>
-                </RadioGroup>
-              </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="height" className="flex items-center gap-2"><Ruler className="h-4 w-4"/>Altura (cm)</Label>
+                    <Input id="height" name="height" type="number" value={biometrics.height} onChange={handleInputChange} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="age" className="flex items-center gap-2"><Cake className="h-4 w-4"/>Edad</Label>
+                    <Input id="age" name="age" type="number" value={biometrics.age} onChange={handleInputChange} />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="activityLevel" className="flex items-center gap-2"><Activity className="h-4 w-4"/>Nivel de Actividad</Label>
+                    <Select value={String(biometrics.activityLevel)} onValueChange={(value) => setBiometrics(prev => ({ ...prev, activityLevel: Number(value) }))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona nivel" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1.2">Sedentario (oficina)</SelectItem>
+                        <SelectItem value="1.375">Ligero (1-3 días/sem)</SelectItem>
+                        <SelectItem value="1.55">Moderado (3-5 días/sem)</SelectItem>
+                        <SelectItem value="1.725">Intenso (6-7 días/sem)</SelectItem>
+                        <SelectItem value="1.9">Atleta (2x día)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label className="flex items-center gap-2"><Target className="h-4 w-4"/>Objetivo</Label>
+                    <RadioGroup defaultValue="maintain" value={goal} onValueChange={(value: 'maintain' | 'lose' | 'gain') => setGoal(value)}>
+                      <div className="flex items-center space-x-4 mt-2">
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="lose" id="lose" />
+                          <Label htmlFor="lose">Bajar Peso</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="maintain" id="maintain" />
+                          <Label htmlFor="maintain">Mantener</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="gain" id="gain" />
+                          <Label htmlFor="gain">Subir Masa</Label>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                   <Button onClick={handleCalculateAndSave} disabled={isCalculating} className="w-full mt-4 font-bold">
+                    {isCalculating ? 'Guardando...' : 'Calcular y Guardar Metas'}
+                   </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

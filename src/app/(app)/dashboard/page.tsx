@@ -1,3 +1,4 @@
+
 "use client"
 
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts"
@@ -40,7 +41,7 @@ const chartConfig = {
 }
 
 export default function DashboardPage() {
-  const { dailyTargets } = useDailyData(); // Keep this for targets from laboratorio
+  const { dailyTargets, isDataLoading: isTargetsLoading } = useDailyData(); // Keep this for targets from laboratorio
   const { user } = useUser();
   const firestore = useFirestore();
 
@@ -64,7 +65,7 @@ export default function DashboardPage() {
   }, [user, firestore, sevenDaysAgo]);
   const { data: trainingSessions, isLoading: isLoadingTrainings } = useCollection<TrainingSession>(trainingSessionsQuery);
 
-  const isLoading = isLoadingMeals || isLoadingTrainings;
+  const isLoading = isLoadingMeals || isLoadingTrainings || isTargetsLoading;
 
   const { dailyConsumed, energyBalanceData } = useMemo(() => {
     const today = startOfDay(new Date());

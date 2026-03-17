@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from "next/link";
@@ -58,14 +59,16 @@ export default function SignupPage() {
       const userProfileRef = doc(firestore, `perfiles/${user.uid}`);
       const userProfileData = {
         id: user.uid,
-        email: email, // Use email from form for consistency
+        email: email,
         firstName: firstName || "",
         lastName: lastName.join(' ') || "",
-        dateOfBirth: "",
-        gender: "",
+        age: 0,
+        gender: "male",
         heightCm: 0,
-        activityLevel: "Sedentario", // Default value
-        athleticDiscipline: "MMA", // Default value
+        weightKg: 0,
+        activityLevel: 1.2,
+        athleticDiscipline: "MMA",
+        goal: "maintain",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       };

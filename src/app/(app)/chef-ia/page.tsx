@@ -38,32 +38,34 @@ export default function ChefIAPage() {
   const [recipes, setRecipes] = useState<GenerateTacticalRecipesOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { biometrics, dailyTargets } = useDailyData();
+  const { biometrics, dailyTargets, isDataLoading } = useDailyData();
   const { user } = useUser();
   const firestore = useFirestore();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      weightKg: 84,
-      calorieTarget: 2800,
-      proteinTargetG: 185,
-      fatTargetG: 75,
-      carbTargetG: 340,
+      weightKg: 0,
+      calorieTarget: 0,
+      proteinTargetG: 0,
+      fatTargetG: 0,
+      carbTargetG: 0,
       mealType: "any",
     },
   });
 
   useEffect(() => {
-    form.reset({
-      weightKg: biometrics.weight,
-      calorieTarget: dailyTargets.calories,
-      proteinTargetG: dailyTargets.protein,
-      fatTargetG: dailyTargets.fats,
-      carbTargetG: dailyTargets.carbs,
-      mealType: "any",
-    });
-  }, [biometrics, dailyTargets, form]);
+    if (!isDataLoading) {
+      form.reset({
+        weightKg: biometrics.weight,
+        calorieTarget: dailyTargets.calories,
+        proteinTargetG: dailyTargets.protein,
+        fatTargetG: dailyTargets.fats,
+        carbTargetG: dailyTargets.carbs,
+        mealType: "any",
+      });
+    }
+  }, [biometrics, dailyTargets, form, isDataLoading]);
 
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
@@ -203,6 +205,21 @@ export default function ChefIAPage() {
               <CardDescription>Introduce tus datos para generar el plan nutricional.</CardDescription>
             </CardHeader>
             <CardContent>
+              {isDataLoading ? (
+                <div className="space-y-6">
+                  <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+                    <div className="space-y-2"><Skeleton className="h-4 w-20" /><Skeleton className="h-10 w-full" /></div>
+                  </div>
+                   <div className="space-y-2"><Skeleton className="h-4 w-24" /><Skeleton className="h-10 w-full" /></div>
+                  <Skeleton className="h-10 w-full" />
+                </div>
+              ) : (
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                   <FormField control={form.control} name="calorieTarget" render={({ field }) => (
@@ -264,6 +281,7 @@ export default function ChefIAPage() {
                   </Button>
                 </form>
               </Form>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -288,6 +306,3 @@ export default function ChefIAPage() {
     </div>
   );
 }
-
-
-    

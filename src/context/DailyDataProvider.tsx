@@ -1,6 +1,9 @@
+
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import { useUser, useFirestore, useDoc, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
+import { doc, serverTimestamp } from 'firebase/firestore';
 
 // Define types within the provider for centralization
 export type Biometrics = {
@@ -20,6 +23,25 @@ export type DailyTargets = {
   fats: number;
 };
 
+// Based on docs/backend.json UserProfile entity
+type UserProfile = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  age: number;
+  gender: 'male' | 'female';
+  heightCm: number;
+  weightKg: number;
+  activityLevel: number;
+  goal: Goal;
+  dailyTargetCalories: number;
+  dailyTargetProtein: number;
+  dailyTargetCarbs: number;
+  dailyTargetFats: number;
+};
+
+
 interface DailyDataContextType {
   intakeCalories: number;
   setIntakeCalories: React.Dispatch<React.SetStateAction<number>>;
@@ -31,6 +53,8 @@ interface DailyDataContextType {
   setGoal: React.Dispatch<React.SetStateAction<Goal>>;
   dailyTargets: DailyTargets;
   setDailyTargets: React.Dispatch<React.SetStateAction<DailyTargets>>;
+  saveData: (data: { biometrics: Biometrics, goal: Goal, dailyTargets: DailyTargets }) => void;
+  isDataLoading: boolean;
 }
 
 const DailyDataContext = createContext<DailyDataContextType | undefined>(undefined);
@@ -39,25 +63,68 @@ export const DailyDataProvider = ({ children }: { children: ReactNode }) => {
   const [intakeCalories, setIntakeCalories] = useState(0);
   const [expenditureCalories, setExpenditureCalories] = useState(0);
 
-  // Default values from laboratorio/page.tsx
-  const [biometrics, setBiometrics] = useState<Biometrics>({
-    gender: 'male',
-    weight: 84,
-    height: 180,
-    age: 28,
-    activityLevel: 1.55,
-  });
-  
-  // Default values from laboratorio/page.tsx
-  const [goal, setGoal] = useState<Goal>('maintain');
+  const { user } = useUser();
+  const firestore = useFirestore();
 
-  // Default values from dashboard/page.tsx
-  const [dailyTargets, setDailyTargets] = useState<DailyTargets>({
-    calories: 3200,
-    protein: 185,
-    carbs: 380,
-    fats: 90,
-  });
+  // Default values
+  const defaultBiometrics: Biometrics = { gender: 'male', weight: 84, height: 180, age: 28, activityLevel: 1.55 };
+  const defaultGoal: Goal = 'maintain';
+  const defaultDailyTargets: DailyTargets = { calories: 3200, protein: 185, carbs: 380, fats: 90 };
+
+  const [biometrics, setBiometrics] = useState<Biometrics>(defaultBiometrics);
+  const [goal, setGoal] = useState<Goal>(defaultGoal);
+  const [dailyTargets, setDailyTargets] = useState<DailyTargets>(defaultDailyTargets);
+
+  const userProfileRef = useMemoFirebase(() =>
+    user && firestore ? doc(firestore, 'perfiles', user.uid) : null,
+    [user, firestore]
+  );
+  
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userProfileRef);
+
+  useEffect(() => {
+    if (userProfile) {
+      setBiometrics({
+        gender: userProfile.gender || defaultBiometrics.gender,
+        weight: userProfile.weightKg || defaultBiometrics.weight,
+        height: userProfile.heightCm || defaultBiometrics.height,
+        age: userProfile.age || defaultBiometrics.age,
+        activityLevel: userProfile.activityLevel || defaultBiometrics.activityLevel,
+      });
+      setGoal(userProfile.goal || defaultGoal);
+      setDailyTargets({
+        calories: userProfile.dailyTargetCalories || defaultDailyTargets.calories,
+        protein: userProfile.dailyTargetProtein || defaultDailyTargets.protein,
+        carbs: userProfile.dailyTargetCarbs || defaultDailyTargets.carbs,
+        fats: userProfile.dailyTargetFats || defaultDailyTargets.fats,
+      });
+    }
+  }, [userProfile]);
+
+  const saveData = useCallback((data: { biometrics: Biometrics, goal: Goal, dailyTargets: DailyTargets }) => {
+    if (!userProfileRef) return;
+    
+    // Update context state immediately for snappy UI
+    setBiometrics(data.biometrics);
+    setGoal(data.goal);
+    setDailyTargets(data.dailyTargets);
+
+    const dataToSave = {
+      gender: data.biometrics.gender,
+      weightKg: data.biometrics.weight,
+      heightCm: data.biometrics.height,
+      age: data.biometrics.age,
+      activityLevel: data.biometrics.activityLevel,
+      goal: data.goal,
+      dailyTargetCalories: data.dailyTargets.calories,
+      dailyTargetProtein: data.dailyTargets.protein,
+      dailyTargetCarbs: data.dailyTargets.carbs,
+      dailyTargetFats: data.dailyTargets.fats,
+      updatedAt: serverTimestamp(),
+    };
+    
+    setDocumentNonBlocking(userProfileRef, dataToSave, { merge: true });
+  }, [userProfileRef]);
 
   return (
     <DailyDataContext.Provider value={{
@@ -70,7 +137,9 @@ export const DailyDataProvider = ({ children }: { children: ReactNode }) => {
       goal,
       setGoal,
       dailyTargets,
-      setDailyTargets
+      setDailyTargets,
+      saveData,
+      isDataLoading: isProfileLoading,
     }}>
       {children}
     </DailyDataContext.Provider>
