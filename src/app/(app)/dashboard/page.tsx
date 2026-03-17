@@ -150,8 +150,14 @@ export default function DashboardPage() {
           <Separator />
            <div className="flex justify-between items-center">
             <span className="font-medium">Balance Neto</span>
-            <span className={`font-mono tracking-tighter font-bold ${netBalance > 0 ? 'text-primary' : 'text-destructive'}`}>
-                {netBalance > 0 ? '+' : ''}{netBalance.toLocaleString()} kcal
+            <span className={`font-mono tracking-tighter font-bold ${netBalance >= 0 ? 'text-primary' : 'text-destructive'}`}>
+                {netBalance >= 0 ? '+' : ''}{netBalance.toLocaleString()} kcal
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">Meta Neta Diaria</span>
+            <span className={`font-mono tracking-tighter ${targetNetBalance >= 0 ? 'text-primary/80' : 'text-destructive/80'}`}>
+                {targetNetBalance >= 0 ? '+' : ''}{targetNetBalance.toLocaleString()} kcal
             </span>
           </div>
         </div>
