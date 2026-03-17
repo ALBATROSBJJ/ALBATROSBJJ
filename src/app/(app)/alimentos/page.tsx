@@ -62,8 +62,8 @@ export default function AlimentosPage() {
         <p className="text-muted-foreground">Busca en el arsenal nutricional y suma tus calorías.</p>
       </header>
 
-      <div className="flex flex-col gap-8">
-        <div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <div className="md:col-span-1 md:sticky top-8">
           <Card>
             <CardHeader>
               <CardTitle>Contador de Calorías</CardTitle>
@@ -101,7 +101,7 @@ export default function AlimentosPage() {
           </Card>
         </div>
 
-        <div>
+        <div className="md:col-span-2">
           <Card>
             <CardHeader>
               <CardTitle>Buscador de Munición</CardTitle>
@@ -118,22 +118,7 @@ export default function AlimentosPage() {
                 />
               </div>
 
-              {isLoading && (
-                  <div className="mt-6 space-y-4 p-4">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                  </div>
-              )}
-
-              {isDataEmpty && (
-                <div className="mt-6 p-4 text-sm text-center bg-secondary/50 border border-dashed rounded-md">
-                    <p><span className="font-bold">Tu base de datos está vacía.</span><br/> Agrega documentos a la colección 'alimentos' en Firestore para ver tus datos aquí.</p>
-                </div>
-              )}
-
-              {!isLoading && filteredAlimentos && <div className="mt-6 border rounded-md">
+              <div className="mt-6 border rounded-md">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -143,7 +128,21 @@ export default function AlimentosPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredAlimentos.length > 0 ? (
+                      {isLoading ? (
+                        [...Array(5)].map((_, i) => (
+                          <TableRow key={i}>
+                            <TableCell><Skeleton className="h-5 w-3/4" /></TableCell>
+                            <TableCell className="text-right"><Skeleton className="h-5 w-1/4" /></TableCell>
+                            <TableCell className="text-center"><Skeleton className="h-8 w-8 rounded-full mx-auto" /></TableCell>
+                          </TableRow>
+                        ))
+                      ) : isDataEmpty ? (
+                        <TableRow>
+                           <TableCell colSpan={3} className="text-center h-24">
+                             <p><span className="font-bold">Tu base de datos está vacía.</span><br/> Agrega documentos a la colección 'alimentos' en Firestore.</p>
+                           </TableCell>
+                         </TableRow>
+                      ) : filteredAlimentos && filteredAlimentos.length > 0 ? (
                         filteredAlimentos.map(item => (
                           <TableRow key={item.id}>
                             <TableCell className="font-medium">{item.nombre}</TableCell>
@@ -164,7 +163,7 @@ export default function AlimentosPage() {
                       )}
                     </TableBody>
                   </Table>
-              </div>}
+              </div>
             </CardContent>
           </Card>
         </div>

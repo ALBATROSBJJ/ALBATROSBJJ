@@ -160,8 +160,8 @@ export default function LaboratorioPage() {
         <p className="text-muted-foreground">Calibra tu motor. La precisión es letal.</p>
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
+        <div className="md:col-span-1">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-black tracking-tighter"><User/>Datos del Atleta</CardTitle>
@@ -237,7 +237,7 @@ export default function LaboratorioPage() {
           </Card>
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="md:col-span-2">
           <Tabs defaultValue="macros" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="macros">Metas Diarias</TabsTrigger>

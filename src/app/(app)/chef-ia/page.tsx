@@ -135,8 +135,8 @@ export default function ChefIAPage() {
         <h1 className="text-3xl font-black tracking-tighter">Chef IA Táctico</h1>
         <p className="text-muted-foreground">Recetas de combate generadas por el Head Coach de Nutrición.</p>
       </header>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
           <Card>
             <CardHeader>
               <CardTitle>Parámetros de Misión</CardTitle>
@@ -207,7 +207,7 @@ export default function ChefIAPage() {
             </CardContent>
           </Card>
         </div>
-        <div className="lg:col-span-2">
+        <div className="md:col-span-2">
           {isLoading ? (
             <LoadingSkeleton />
           ) : recipes ? (
