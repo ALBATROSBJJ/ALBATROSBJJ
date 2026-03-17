@@ -1,6 +1,6 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis, Tooltip, ReferenceLine, Cell } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
 import { Progress } from "@/components/ui/progress"
@@ -28,13 +28,16 @@ const energyBalanceData = [
 ];
 
 const chartConfig = {
+  surplus: {
+    label: "Balance Neto",
+  },
   intake: {
-    label: "Ingesta",
+    label: "Superávit",
     color: "hsl(var(--primary))",
   },
   expenditure: {
-    label: "Gasto",
-    color: "hsl(var(--secondary))",
+    label: "Déficit",
+    color: "hsl(var(--destructive))",
   },
 }
 
@@ -99,6 +102,18 @@ export default function DashboardPage() {
   React.useEffect(() => {
     calculateTargets();
   }, [calculateTargets]);
+
+  const tdee = React.useMemo(() => {
+    let bmr;
+    if (biometrics.gender === 'male') {
+      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) + 5;
+    } else {
+      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) - 161;
+    }
+    return bmr * biometrics.activityLevel;
+  }, [biometrics]);
+
+  const targetNetBalance = Math.round(dailyTargets.calories - tdee);
 
   const renderMacroProgress = (key: 'protein' | 'carbs' | 'fats', title: string) => {
     const consumed = dailyConsumed[key as keyof typeof dailyConsumed];
@@ -176,19 +191,34 @@ export default function DashboardPage() {
 
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="font-black tracking-tighter">Balance Energético Semanal</CardTitle>
-            <CardDescription>Ingesta vs. Gasto calórico en los últimos 7 días.</CardDescription>
+            <CardTitle className="font-black tracking-tighter">Balance Neto Semanal</CardTitle>
+            <CardDescription>Balance calórico neto (ingesta - gasto) de los últimos 7 días.</CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig} className="h-[280px] w-full">
+             <ChartContainer config={chartConfig} className="h-[280px] w-full">
               <ResponsiveContainer>
-                <BarChart data={energyBalanceData} margin={{ top: 20, right: 0, left: -20, bottom: 5 }}>
+                <BarChart data={energyBalanceData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }} barGap={4}>
                   <CartesianGrid vertical={false} strokeDasharray="3 3" />
                   <XAxis dataKey="day" tickLine={false} axisLine={false} tickMargin={8} />
-                  <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-                  <Tooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
-                  <Bar dataKey="intake" fill="var(--color-intake)" radius={4} />
-                  <Bar dataKey="expenditure" fill="var(--color-expenditure)" radius={4} />
+                  <YAxis tickLine={false} axisLine={false} tickMargin={8} unit="kcal" />
+                  <Tooltip
+                    cursor={false}
+                    content={<ChartTooltipContent
+                      formatter={(value) => `${value.toLocaleString()} kcal`}
+                      indicator="dot"
+                    />}
+                  />
+                  <ReferenceLine 
+                    y={targetNetBalance} 
+                    label={{ value: 'Meta Neta', position: 'insideTopRight', fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} 
+                    stroke="hsl(var(--ring))" 
+                    strokeDasharray="2 6" 
+                  />
+                  <Bar dataKey="surplus" radius={4}>
+                    {energyBalanceData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.surplus >= 0 ? "var(--color-intake)" : "var(--color-expenditure)"} />
+                    ))}
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </ChartContainer>
