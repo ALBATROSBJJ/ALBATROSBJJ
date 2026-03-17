@@ -2,13 +2,11 @@
 
 import * as React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { User, Weight, Ruler, Cake, Activity } from 'lucide-react';
+import { User, Weight, Ruler, Cake, Activity, Target } from 'lucide-react';
 
 type Biometrics = {
   gender: 'male' | 'female';
@@ -27,6 +25,7 @@ export default function LaboratorioPage() {
     activityLevel: 1.55,
   });
 
+  const [goal, setGoal] = React.useState<'maintain' | 'lose' | 'gain'>('maintain');
   const [bmr, setBmr] = React.useState<number | null>(null);
   const [tdee, setTdee] = React.useState<number | null>(null);
   const [macros, setMacros] = React.useState<{ protein: number, fat: number, carbs: number } | null>(null);
@@ -48,22 +47,29 @@ export default function LaboratorioPage() {
 
     // TDEE
     const calculatedTdee = calculatedBmr * biometrics.activityLevel;
-    setTdee(Math.round(calculatedTdee));
+    
+    let targetCalories = calculatedTdee;
+    if (goal === 'lose') {
+      targetCalories *= 0.85; // 15% deficit
+    } else if (goal === 'gain') {
+      targetCalories *= 1.15; // 15% surplus
+    }
+    setTdee(Math.round(targetCalories));
     
     // Macros
     const proteinG = biometrics.weight * 2.2;
     const fatG = biometrics.weight * 0.9;
     const proteinKcal = proteinG * 4;
     const fatKcal = fatG * 9;
-    const carbsKcal = calculatedTdee - proteinKcal - fatKcal;
+    const carbsKcal = targetCalories - proteinKcal - fatKcal;
     const carbsG = carbsKcal / 4;
     setMacros({
       protein: Math.round(proteinG),
       fat: Math.round(fatG),
-      carbs: Math.round(carbsG)
+      carbs: Math.round(carbsG < 0 ? 0 : carbsG)
     });
 
-  }, [biometrics]);
+  }, [biometrics, goal]);
 
   React.useEffect(() => {
     calculateAll();
@@ -129,6 +135,26 @@ export default function LaboratorioPage() {
                   </SelectContent>
                 </Select>
               </div>
+
+              <div>
+                <Label className="flex items-center gap-2"><Target className="h-4 w-4"/>Objetivo</Label>
+                <RadioGroup defaultValue="maintain" value={goal} onValueChange={(value: 'maintain' | 'lose' | 'gain') => setGoal(value)}>
+                  <div className="flex items-center space-x-4 mt-2">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="lose" id="lose" />
+                      <Label htmlFor="lose">Bajar Peso</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="maintain" id="maintain" />
+                      <Label htmlFor="maintain">Mantener</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="gain" id="gain" />
+                      <Label htmlFor="gain">Subir Masa</Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -141,7 +167,7 @@ export default function LaboratorioPage() {
             </CardHeader>
             <CardContent className="space-y-8">
               <div className="p-6 rounded-md border bg-secondary/50">
-                  <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Gasto Energético Diario (TDEE)</h3>
+                  <h3 className="text-muted-foreground tracking-widest uppercase text-sm">Objetivo Calórico Diario</h3>
                   <p className="text-5xl font-black text-primary tracking-tighter">{tdee?.toLocaleString() ?? '...'} <span className="text-3xl text-muted-foreground">kcal</span></p>
                   <p className="text-sm text-muted-foreground mt-1">Metabolismo Basal (BMR): {bmr?.toLocaleString() ?? '...'} kcal</p>
               </div>
