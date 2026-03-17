@@ -24,7 +24,7 @@ export default function AppsPage() {
               Usa este botón para descargar el archivo APK de la aplicación para dispositivos Android.
             </p>
             <Button asChild className="font-bold">
-              <Link href="https://drive.google.com/uc?export=download&id=15x9Bx9C9E9Up1k_j-qjU-bc7tNC6IThT">
+              <Link href="https://github.com/ALBATROSBJJ/mi-app/releases/download/1.0/app-debug.1.apk">
                 <Download className="mr-2 h-4 w-4" />
                 Descargar APK
               </Link>
