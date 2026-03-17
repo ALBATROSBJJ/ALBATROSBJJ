@@ -59,18 +59,6 @@ export default function DashboardPage() {
     });
   }, [intakeCalories, expenditureCalories]);
 
-  const tdee = React.useMemo(() => {
-    let bmr;
-    if (biometrics.gender === 'male') {
-      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) + 5;
-    } else {
-      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) - 161;
-    }
-    return bmr * biometrics.activityLevel;
-  }, [biometrics]);
-
-  const targetNetBalance = Math.round(dailyTargets.calories - tdee);
-
   const renderMacroProgress = (key: 'protein' | 'carbs' | 'fats', title: string) => {
     const consumed = dailyConsumed[key as keyof typeof dailyConsumed];
     const target = dailyTargets[key as keyof typeof dailyTargets];
@@ -111,9 +99,9 @@ export default function DashboardPage() {
             </span>
           </div>
           <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">Meta Neta Diaria</span>
-            <span className={`font-mono tracking-tighter ${targetNetBalance >= 0 ? 'text-primary/80' : 'text-destructive/80'}`}>
-                {targetNetBalance >= 0 ? '+' : ''}{targetNetBalance.toLocaleString()} kcal
+            <span className="text-muted-foreground">Objetivo Calórico</span>
+            <span className="font-mono tracking-tighter text-primary/80">
+                {dailyTargets.calories.toLocaleString()} kcal
             </span>
           </div>
         </div>
