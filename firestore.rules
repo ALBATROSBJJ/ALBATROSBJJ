@@ -169,7 +169,7 @@ service cloud.firestore {
      * @principle Enforces document ownership via path and validates relational integrity by checking the internal 'userId' field.
      */
     match /perfiles/{userId}/mealLogs/{mealLogId} {
-      allow get, list: if isOwner(userId);
+      allow get, list: if request.auth != null && request.auth.uid == userId;
       allow create: if isCreatingOwnChildDoc(userId);
       allow update: if isUpdatingOwnChildDoc(userId);
       allow delete: if isExistingOwner(userId);
@@ -197,7 +197,7 @@ service cloud.firestore {
      * @principle Enforces document ownership via path and validates relational integrity by checking the internal 'userId' field.
      */
     match /perfiles/{userId}/trainingSessions/{trainingSessionId} {
-      allow get, list: if isOwner(userId);
+      allow get, list: if request.auth != null && request.auth.uid == userId;
       allow create: if isCreatingOwnChildDoc(userId);
       allow update: if isUpdatingOwnChildDoc(userId);
       allow delete: if isExistingOwner(userId);

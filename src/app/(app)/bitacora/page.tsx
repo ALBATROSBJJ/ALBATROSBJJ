@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Utensils, Dumbbell } from "lucide-react";
+import { PlusCircle, Utensils, Dumbbell, Trash2 } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useForm } from 'react-hook-form';
@@ -14,8 +14,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, serverTimestamp, query, orderBy } from 'firebase/firestore';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { collection, serverTimestamp, query, orderBy, doc } from 'firebase/firestore';
+import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -37,6 +37,9 @@ const trainingSessionSchema = z.object({
   notes: z.string().optional(),
 });
 type TrainingSession = z.infer<typeof trainingSessionSchema> & { id: string; logDate: string, notes?: string };
+
+type HistoryItem = (MealLog & { type: 'meal' }) | (TrainingSession & { type: 'training' });
+
 
 export default function BitacoraPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -154,6 +157,20 @@ export default function BitacoraPage() {
     setIsDialogOpen(false);
   };
 
+  const handleDelete = (item: HistoryItem) => {
+    if (!user || !firestore) return;
+
+    const collectionName = item.type === 'meal' ? 'mealLogs' : 'trainingSessions';
+    const docRef = doc(firestore, `perfiles/${user.uid}/${collectionName}`, item.id);
+    
+    deleteDocumentNonBlocking(docRef);
+
+    toast({
+      title: "Registro Eliminado",
+      description: "El registro ha sido eliminado de tu bitácora.",
+    });
+  };
+
   return (
     <>
       <div className="p-4 md:p-8 space-y-8">
@@ -210,10 +227,15 @@ export default function BitacoraPage() {
                                         </>
                                     )}
                                 </div>
-                                <div className="text-right text-xs text-muted-foreground whitespace-nowrap">
-                                    <span>{new Date(item.logDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                                    <br/>
-                                    <span>{new Date(item.logDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                                <div className="flex items-center gap-2 ml-auto">
+                                    <div className="text-right text-xs text-muted-foreground whitespace-nowrap">
+                                        <span>{new Date(item.logDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                        <br/>
+                                        <span>{new Date(item.logDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                                    </div>
+                                    <Button variant="ghost" size="icon" onClick={() => handleDelete(item as HistoryItem)}>
+                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                    </Button>
                                 </div>
                             </div>
                         ))}
