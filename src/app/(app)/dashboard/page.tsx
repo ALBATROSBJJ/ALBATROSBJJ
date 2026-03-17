@@ -6,6 +6,7 @@ import { ChartContainer, ChartTooltipContent } from "@/components/ui/chart"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import React from "react"
+import { useDailyData } from "@/context/DailyDataProvider"
 
 type Biometrics = {
   gender: 'male' | 'female';
@@ -26,16 +27,6 @@ const energyBalanceData = [
   { day: 'Dom', intake: 2400, expenditure: 1800, surplus: 600 },
 ];
 
-// Mock data for today's consumption
-const dailyConsumed = {
-  calories: 3000,
-  protein: 190,
-  carbs: 350,
-  fats: 80,
-  expenditure: 2400, // Gasto del día
-};
-
-
 const chartConfig = {
   intake: {
     label: "Ingesta",
@@ -48,6 +39,18 @@ const chartConfig = {
 }
 
 export default function DashboardPage() {
+  const { intakeCalories, expenditureCalories } = useDailyData();
+
+  // Data for today's consumption is now based on shared context
+  const dailyConsumed = {
+    calories: intakeCalories,
+    protein: 190, // Note: This is still mock data
+    carbs: 350,   // Note: This is still mock data
+    fats: 80,     // Note: This is still mock data
+    expenditure: expenditureCalories,
+  };
+
+
   const [biometrics] = React.useState<Biometrics>({
     gender: 'male',
     weight: 84,
@@ -100,7 +103,7 @@ export default function DashboardPage() {
   const renderMacroProgress = (key: 'protein' | 'carbs' | 'fats', title: string) => {
     const consumed = dailyConsumed[key as keyof typeof dailyConsumed];
     const target = dailyTargets[key as keyof typeof dailyTargets];
-    const percentage = (consumed / target) * 100;
+    const percentage = target > 0 ? (consumed / target) * 100 : 0;
     return (
       <div>
         <div className="flex justify-between items-baseline mb-1">

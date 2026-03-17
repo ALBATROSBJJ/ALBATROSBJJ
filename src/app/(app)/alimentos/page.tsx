@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { collection, query } from 'firebase/firestore';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from "@/components/ui/separator";
+import { useDailyData } from "@/context/DailyDataProvider";
 
 // Based on docs/backend.json
 type FoodItem = {
@@ -23,6 +24,7 @@ export default function AlimentosPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedFoods, setSelectedFoods] = useState<FoodItem[]>([]);
   const [totalCalories, setTotalCalories] = useState(0);
+  const { setIntakeCalories } = useDailyData();
 
   const firestore = useFirestore();
 
@@ -41,13 +43,17 @@ export default function AlimentosPage() {
 
   const handleAddFood = (food: FoodItem) => {
     setSelectedFoods(prev => [...prev, food]);
-    setTotalCalories(prev => prev + food.calorias);
   };
 
   const handleClearFoods = () => {
     setSelectedFoods([]);
-    setTotalCalories(0);
   }
+
+  useEffect(() => {
+    const newTotalCalories = selectedFoods.reduce((sum, food) => sum + food.calorias, 0);
+    setTotalCalories(newTotalCalories);
+    setIntakeCalories(newTotalCalories);
+  }, [selectedFoods, setIntakeCalories]);
 
   return (
     <div className="p-4 md:p-8 space-y-8">
@@ -112,21 +118,22 @@ export default function AlimentosPage() {
                 />
               </div>
 
+              {isLoading && (
+                  <div className="mt-6 space-y-4 p-4">
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-8 w-full" />
+                  </div>
+              )}
+
               {isDataEmpty && (
                 <div className="mt-6 p-4 text-sm text-center bg-secondary/50 border border-dashed rounded-md">
                     <p><span className="font-bold">Tu base de datos está vacía.</span><br/> Agrega documentos a la colección 'alimentos' en Firestore para ver tus datos aquí.</p>
                 </div>
               )}
 
-              {!isDataEmpty && <div className="mt-6 border rounded-md">
-                {isLoading ? (
-                  <div className="space-y-4 p-4">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                  </div>
-                ) : (
+              {!isLoading && filteredAlimentos && <div className="mt-6 border rounded-md">
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -136,7 +143,7 @@ export default function AlimentosPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {filteredAlimentos && filteredAlimentos.length > 0 ? (
+                      {filteredAlimentos.length > 0 ? (
                         filteredAlimentos.map(item => (
                           <TableRow key={item.id}>
                             <TableCell className="font-medium">{item.nombre}</TableCell>
@@ -157,7 +164,6 @@ export default function AlimentosPage() {
                       )}
                     </TableBody>
                   </Table>
-                )}
               </div>}
             </CardContent>
           </Card>

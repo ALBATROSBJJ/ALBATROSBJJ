@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { User, Weight, Ruler, Cake, Activity, Target, Flame, HeartPulse } from 'lucide-react';
 import { activities, type Activity as MetActivity } from '@/lib/met-values';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useDailyData } from '@/context/DailyDataProvider';
 
 type Biometrics = {
   gender: 'male' | 'female';
@@ -35,6 +36,7 @@ export default function LaboratorioPage() {
   const [selectedActivity, setSelectedActivity] = React.useState<MetActivity | undefined>(activities[0]);
   const [duration, setDuration] = React.useState(30);
   const [burnedCalories, setBurnedCalories] = React.useState<number | null>(null);
+  const { setExpenditureCalories } = useDailyData();
 
   const [bodyFatMethod, setBodyFatMethod] = React.useState<'navy' | 'bmi'>('navy');
   const [measurements, setMeasurements] = React.useState({
@@ -93,11 +95,14 @@ export default function LaboratorioPage() {
   const calculateBurnedCalories = React.useCallback(() => {
     if (selectedActivity && biometrics.weight && duration > 0) {
       const calories = selectedActivity.met * biometrics.weight * (duration / 60);
-      setBurnedCalories(Math.round(calories));
+      const roundedCalories = Math.round(calories);
+      setBurnedCalories(roundedCalories);
+      setExpenditureCalories(roundedCalories);
     } else {
       setBurnedCalories(null);
+      setExpenditureCalories(0);
     }
-  }, [selectedActivity, biometrics.weight, duration]);
+  }, [selectedActivity, biometrics.weight, duration, setExpenditureCalories]);
 
   const calculateBodyFat = React.useCallback(() => {
     const { weight, height, gender, age } = biometrics;
