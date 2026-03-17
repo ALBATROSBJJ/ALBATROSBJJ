@@ -8,8 +8,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { getUfcWeightCategory } from '@/lib/ufc';
 import { Separator } from '@/components/ui/separator';
-import { useUser, useFirestore, useDoc, useMemoFirebase, setDocumentNonBlocking } from '@/firebase';
-import { doc, serverTimestamp } from 'firebase/firestore';
+import { useUser, useFirestore, useDoc, useMemoFirebase, setDocumentNonBlocking, useAuth, initiatePasswordReset } from '@/firebase';
+import { doc, serverTimestamp, type AuthError } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -28,6 +28,7 @@ type UserProfile = {
 
 export default function PerfilPage() {
   const { user } = useUser();
+  const auth = useAuth();
   const firestore = useFirestore();
   const { toast } = useToast();
 
@@ -104,6 +105,35 @@ export default function PerfilPage() {
     setIsSaving(false);
   };
   
+  const handlePasswordReset = () => {
+    if (!user || !user.email) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo encontrar tu email para restablecer la contraseña.",
+      });
+      return;
+    }
+
+    initiatePasswordReset(
+      auth,
+      user.email,
+      () => { // onSuccess
+        toast({
+          title: "Email Enviado",
+          description: "Revisa tu bandeja de entrada para el enlace de restablecimiento.",
+        });
+      },
+      (error: AuthError) => { // onError
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "No se pudo enviar el correo de restablecimiento. Inténtalo de nuevo más tarde.",
+        });
+      }
+    );
+  };
+
   const getAge = (dateString: string) => {
     if (!dateString) return 0;
     try {
@@ -258,8 +288,7 @@ export default function PerfilPage() {
                     <p className="text-sm text-muted-foreground">Edad</p>
                     <p className="text-3xl font-black tracking-tighter">{age > 0 ? age : '-'}</p>
                 </div>
-               <Button variant="outline" className="w-full" disabled>Cambiar Contraseña</Button>
-               <Button variant="destructive" className="w-full" disabled>Eliminar Cuenta</Button>
+               <Button variant="outline" className="w-full" onClick={handlePasswordReset}>Cambiar Contraseña</Button>
             </CardContent>
           </Card>
         </div>
