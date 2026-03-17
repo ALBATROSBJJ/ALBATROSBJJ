@@ -16,15 +16,15 @@ type Biometrics = {
   activityLevel: number;
 };
 
-// Data for the weekly chart
-const energyBalanceData = [
-  { day: 'Lun', intake: 2800, expenditure: 2500, surplus: 300 },
-  { day: 'Mar', intake: 2600, expenditure: 2700, surplus: -100 },
-  { day: 'Mié', intake: 3000, expenditure: 2400, surplus: 600 },
-  { day: 'Jue', intake: 2700, expenditure: 2800, surplus: -100 },
-  { day: 'Vie', intake: 3200, expenditure: 3000, surplus: 200 },
-  { day: 'Sáb', intake: 3500, expenditure: 2200, surplus: 1300 },
-  { day: 'Dom', intake: 2400, expenditure: 1800, surplus: 600 },
+// Base data for the weekly chart
+const initialEnergyBalanceData = [
+  { day: 'Lun', intake: 2800, expenditure: 2500 },
+  { day: 'Mar', intake: 2600, expenditure: 2700 },
+  { day: 'Mié', intake: 3000, expenditure: 2400 },
+  { day: 'Jue', intake: 2700, expenditure: 2800 },
+  { day: 'Vie', intake: 3200, expenditure: 3000 },
+  { day: 'Sáb', intake: 3500, expenditure: 2200 },
+  { day: 'Dom', intake: 2400, expenditure: 1800 },
 ];
 
 const chartConfig = {
@@ -49,6 +49,23 @@ export default function DashboardPage() {
     fats: 80,     // Note: This is still mock data
     expenditure: expenditureCalories,
   };
+  
+  // Dynamically update chart data for today
+  const energyBalanceData = React.useMemo(() => {
+    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+    const today = days[new Date().getDay()];
+
+    return initialEnergyBalanceData.map(dayData => {
+        if (dayData.day === today) {
+            return {
+                ...dayData,
+                intake: intakeCalories,
+                expenditure: expenditureCalories,
+            };
+        }
+        return dayData;
+    });
+  }, [intakeCalories, expenditureCalories]);
 
 
   const [biometrics] = React.useState<Biometrics>({
@@ -165,7 +182,7 @@ export default function DashboardPage() {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
-        const netBalance = data.surplus;
+        const netBalance = data.intake - data.expenditure;
         const colorClass = netBalance >= 0 ? 'text-primary' : 'text-destructive';
 
         return (
@@ -176,7 +193,7 @@ export default function DashboardPage() {
             <p>Gasto: <span className="font-mono font-medium">{data.expenditure.toLocaleString()} kcal</span></p>
             <p className={`font-bold ${colorClass}`}>
                 Balance Neto: 
-                <span className="font-mono font-medium"> {netBalance.toLocaleString()} kcal</span>
+                <span className="font-mono font-medium"> {netBalance >= 0 ? '+' : ''}{netBalance.toLocaleString()} kcal</span>
             </p>
             </div>
         </div>
