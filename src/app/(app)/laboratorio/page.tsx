@@ -9,28 +9,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { User, Weight, Ruler, Cake, Activity, Target, Flame, HeartPulse, PlusCircle } from 'lucide-react';
 import { activities, type Activity as MetActivity } from '@/lib/met-values';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useDailyData } from '@/context/DailyDataProvider';
+import { useDailyData, type Biometrics, type Goal } from '@/context/DailyDataProvider';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 
-type Biometrics = {
-  gender: 'male' | 'female';
-  weight: number;
-  height: number;
-  age: number;
-  activityLevel: number;
-};
-
 export default function LaboratorioPage() {
-  const [biometrics, setBiometrics] = React.useState<Biometrics>({
-    gender: 'male',
-    weight: 84,
-    height: 180,
-    age: 28,
-    activityLevel: 1.55,
-  });
+  const {
+    biometrics,
+    setBiometrics,
+    goal,
+    setGoal,
+    setDailyTargets,
+    setExpenditureCalories
+  } = useDailyData();
 
-  const [goal, setGoal] = React.useState<'maintain' | 'lose' | 'gain'>('maintain');
   const [bmr, setBmr] = React.useState<number | null>(null);
   const [tdee, setTdee] = React.useState<number | null>(null);
   const [macros, setMacros] = React.useState<{ protein: number, fat: number, carbs: number } | null>(null);
@@ -38,7 +30,6 @@ export default function LaboratorioPage() {
   const [selectedActivity, setSelectedActivity] = React.useState<MetActivity | undefined>(activities[0]);
   const [duration, setDuration] = React.useState(30);
   const [burnedCalories, setBurnedCalories] = React.useState<number | null>(null);
-  const { setExpenditureCalories } = useDailyData();
   const { toast } = useToast();
 
   const [bodyFatMethod, setBodyFatMethod] = React.useState<'navy' | 'bmi'>('navy');
@@ -87,13 +78,21 @@ export default function LaboratorioPage() {
     const fatKcal = fatG * 9;
     const carbsKcal = targetCalories - proteinKcal - fatKcal;
     const carbsG = carbsKcal / 4;
-    setMacros({
+    const calculatedMacros = {
       protein: Math.round(proteinG),
       fat: Math.round(fatG),
       carbs: Math.round(carbsG < 0 ? 0 : carbsG)
+    };
+    setMacros(calculatedMacros);
+
+    setDailyTargets({
+        calories: Math.round(targetCalories),
+        protein: calculatedMacros.protein,
+        fats: calculatedMacros.fat,
+        carbs: calculatedMacros.carbs
     });
 
-  }, [biometrics, goal]);
+  }, [biometrics, goal, setDailyTargets]);
 
   const calculateBurnedCalories = React.useCallback(() => {
     if (selectedActivity && biometrics.weight && duration > 0) {

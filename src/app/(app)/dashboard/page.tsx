@@ -8,14 +8,6 @@ import { Separator } from "@/components/ui/separator"
 import React from "react"
 import { useDailyData } from "@/context/DailyDataProvider"
 
-type Biometrics = {
-  gender: 'male' | 'female';
-  weight: number;
-  height: number;
-  age: number;
-  activityLevel: number;
-};
-
 // Base data for the weekly chart
 const initialEnergyBalanceData = [
   { day: 'Lun', intake: 2800, expenditure: 2500 },
@@ -39,7 +31,7 @@ const chartConfig = {
 }
 
 export default function DashboardPage() {
-  const { intakeCalories, expenditureCalories } = useDailyData();
+  const { intakeCalories, expenditureCalories, dailyTargets, biometrics } = useDailyData();
 
   // Data for today's consumption is now based on shared context
   const dailyConsumed = {
@@ -66,56 +58,6 @@ export default function DashboardPage() {
         return dayData;
     });
   }, [intakeCalories, expenditureCalories]);
-
-
-  const [biometrics] = React.useState<Biometrics>({
-    gender: 'male',
-    weight: 84,
-    height: 180,
-    age: 28,
-    activityLevel: 1.55,
-  });
-  const [goal] = React.useState<'maintain' | 'lose' | 'gain'>('gain');
-  const [dailyTargets, setDailyTargets] = React.useState({
-    calories: 3200,
-    protein: 185,
-    carbs: 380,
-    fats: 90,
-  });
-
-  const calculateTargets = React.useCallback(() => {
-    let bmr;
-    if (biometrics.gender === 'male') {
-      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) + 5;
-    } else {
-      bmr = (10 * biometrics.weight) + (6.25 * biometrics.height) - (5 * biometrics.age) - 161;
-    }
-
-    const tdee = bmr * biometrics.activityLevel;
-    
-    let targetCalories = tdee;
-    if (goal === 'lose') {
-      targetCalories *= 0.85;
-    } else if (goal === 'gain') {
-      targetCalories *= 1.15;
-    }
-    
-    const proteinG = biometrics.weight * 2.2;
-    const fatG = biometrics.weight * 0.9;
-    const carbsKcal = targetCalories - (proteinG * 4) - (fatG * 9);
-    const carbsG = carbsKcal / 4;
-    
-    setDailyTargets({
-      calories: Math.round(targetCalories),
-      protein: Math.round(proteinG),
-      fats: Math.round(fatG),
-      carbs: Math.round(carbsG),
-    });
-  }, [biometrics, goal]);
-
-  React.useEffect(() => {
-    calculateTargets();
-  }, [calculateTargets]);
 
   const tdee = React.useMemo(() => {
     let bmr;
