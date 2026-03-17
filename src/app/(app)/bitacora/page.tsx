@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Utensils, Dumbbell } from "lucide-react";
@@ -13,10 +13,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth, useFirestore } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { useAuth, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const mealLogSchema = z.object({
   mealType: z.enum(['Desayuno', 'Almuerzo', 'Cena', 'Snack'], { required_error: "Debes seleccionar un tipo de comida." }),
@@ -26,6 +27,7 @@ const mealLogSchema = z.object({
   totalCarbohydrates: z.coerce.number().min(0, "Los carbohidratos no pueden ser negativos."),
   notes: z.string().optional(),
 });
+type MealLog = z.infer<typeof mealLogSchema> & { id: string; logDate: string, notes?: string };
 
 const trainingSessionSchema = z.object({
   activityType: z.string().min(1, "Debes especificar un tipo de actividad."),
@@ -34,6 +36,7 @@ const trainingSessionSchema = z.object({
   estimatedCaloriesBurned: z.coerce.number().min(0, "Las calorías quemadas no pueden ser negativas."),
   notes: z.string().optional(),
 });
+type TrainingSession = z.infer<typeof trainingSessionSchema> & { id: string; logDate: string, notes?: string };
 
 export default function BitacoraPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -63,6 +66,33 @@ export default function BitacoraPage() {
       notes: "",
     },
   });
+
+  // Fetching data
+  const mealLogsQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, `perfiles/${user.uid}/mealLogs`), orderBy('logDate', 'desc'));
+  }, [user, firestore]);
+  const { data: mealLogs, isLoading: isLoadingMeals } = useCollection<MealLog>(mealLogsQuery);
+
+  const trainingSessionsQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, `perfiles/${user.uid}/trainingSessions`), orderBy('logDate', 'desc'));
+  }, [user, firestore]);
+  const { data: trainingSessions, isLoading: isLoadingTrainings } = useCollection<TrainingSession>(trainingSessionsQuery);
+
+  const combinedHistory = useMemo(() => {
+    const meals = mealLogs?.map(log => ({ ...log, type: 'meal' as const })) || [];
+    const trainings = trainingSessions?.map(session => ({ ...session, type: 'training' as const })) || [];
+
+    const combined = [...meals, ...trainings];
+    
+    // Firestore's orderBy should handle this, but a client-side sort after merge is necessary
+    combined.sort((a, b) => new Date(b.logDate).getTime() - new Date(a.logDate).getTime());
+
+    return combined;
+  }, [mealLogs, trainingSessions]);
+
+  const isLoading = isLoadingMeals || isLoadingTrainings;
 
   const onMealSubmit = (values: z.infer<typeof mealLogSchema>) => {
     if (!user || !firestore) {
@@ -143,10 +173,53 @@ export default function BitacoraPage() {
               Añadir Registro
             </Button>
           </CardHeader>
-          <CardContent>
-            <div className="border rounded-md min-h-[500px] flex items-center justify-center bg-background/50">
-              <p className="text-muted-foreground">Aquí se mostrará tu historial de comidas y entrenamientos.</p>
-            </div>
+           <CardContent>
+            {isLoading ? (
+                <div className="space-y-4 p-4">
+                    {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}
+                </div>
+            ) : combinedHistory.length === 0 ? (
+                <div className="border rounded-md min-h-[500px] flex items-center justify-center bg-background/50 text-center p-4">
+                    <p className="text-muted-foreground">No hay registros en tu bitácora.<br/>Añade una comida o un entrenamiento para empezar.</p>
+                </div>
+            ) : (
+                <div className="border rounded-md">
+                    <div className="divide-y divide-border">
+                        {combinedHistory.map((item) => (
+                            <div key={item.id} className="p-4 flex items-start gap-4">
+                                <div className="bg-secondary p-3 rounded-full mt-1">
+                                    {item.type === 'meal' ? <Utensils className="h-5 w-5 text-primary" /> : <Dumbbell className="h-5 w-5 text-primary" />}
+                                </div>
+                                <div className="flex-1">
+                                    {item.type === 'meal' && (
+                                        <>
+                                            <p className="font-bold">{item.mealType}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {item.totalCalories} kcal | Proteína: {item.totalProtein}g | Grasa: {item.totalFat}g | Carbs: {item.totalCarbohydrates}g
+                                            </p>
+                                            {item.notes && <p className="text-xs mt-1 italic text-muted-foreground">"{item.notes}"</p>}
+                                        </>
+                                    )}
+                                    {item.type === 'training' && (
+                                        <>
+                                            <p className="font-bold">{item.activityType}</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {item.durationMinutes} min | Intensidad: {item.intensityLevel} | {item.estimatedCaloriesBurned} kcal quemadas
+                                            </p>
+                                            {item.notes && <p className="text-xs mt-1 italic text-muted-foreground">"{item.notes}"</p>}
+                                        </>
+                                    )}
+                                </div>
+                                <div className="text-right text-xs text-muted-foreground whitespace-nowrap">
+                                    <span>{new Date(item.logDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                                    <br/>
+                                    <span>{new Date(item.logDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
           </CardContent>
         </Card>
       </div>
