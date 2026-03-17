@@ -24,7 +24,7 @@ export default function AppsPage() {
               Usa este botón para descargar el archivo APK de la aplicación para dispositivos Android.
             </p>
             <Button asChild className="font-bold">
-              <Link href="https://drive.google.com/file/d/15x9Bx9C9E9Up1k_j-qjU-bc7tNC6IThT/view?usp=drive_link" target="_blank" rel="noopener noreferrer">
+              <Link href="https://drive.google.com/uc?export=download&id=15x9Bx9C9E9Up1k_j-qjU-bc7tNC6IThT">
                 <Download className="mr-2 h-4 w-4" />
                 Descargar APK
               </Link>
