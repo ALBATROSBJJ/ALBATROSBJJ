@@ -5,19 +5,28 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ChartContainer, ChartLegend, ChartLegendContent } from "@/components/ui/chart"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
-import React from "react"
+import React, { useMemo } from "react"
 import { useDailyData } from "@/context/DailyDataProvider"
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
+import { subDays, startOfDay, format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Skeleton } from "@/components/ui/skeleton"
 
-// Base data for the weekly chart
-const initialEnergyBalanceData = [
-  { day: 'Lun', intake: 2800, expenditure: 2500 },
-  { day: 'Mar', intake: 2600, expenditure: 2700 },
-  { day: 'Mié', intake: 3000, expenditure: 2400 },
-  { day: 'Jue', intake: 2700, expenditure: 2800 },
-  { day: 'Vie', intake: 3200, expenditure: 3000 },
-  { day: 'Sáb', intake: 3500, expenditure: 2200 },
-  { day: 'Dom', intake: 2400, expenditure: 1800 },
-];
+// Type definitions from bitacora/page.tsx
+type MealLog = {
+  id: string;
+  logDate: string; // ISO String
+  totalCalories: number;
+  totalProtein: number;
+  totalFat: number;
+  totalCarbohydrates: number;
+};
+type TrainingSession = {
+  id: string;
+  logDate: string; // ISO String
+  estimatedCaloriesBurned: number;
+};
 
 const chartConfig = {
   intake: {
@@ -31,38 +40,82 @@ const chartConfig = {
 }
 
 export default function DashboardPage() {
-  const { intakeCalories, expenditureCalories, dailyTargets, biometrics } = useDailyData();
+  const { dailyTargets } = useDailyData(); // Keep this for targets from laboratorio
+  const { user } = useUser();
+  const firestore = useFirestore();
 
-  // Data for today's consumption is now based on shared context
-  const dailyConsumed = {
-    calories: intakeCalories,
-    protein: 190, // Note: This is still mock data
-    carbs: 350,   // Note: This is still mock data
-    fats: 80,     // Note: This is still mock data
-    expenditure: expenditureCalories,
-  };
-  
-  // Dynamically update chart data for today
-  const energyBalanceData = React.useMemo(() => {
-    const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-    const today = days[new Date().getDay()];
+  const sevenDaysAgo = useMemo(() => startOfDay(subDays(new Date(), 6)), []);
 
-    return initialEnergyBalanceData.map(dayData => {
-        if (dayData.day === today) {
-            return {
-                ...dayData,
-                intake: intakeCalories,
-                expenditure: expenditureCalories,
-            };
-        }
-        return dayData;
-    });
-  }, [intakeCalories, expenditureCalories]);
+  const mealLogsQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(
+        collection(firestore, `perfiles/${user.uid}/mealLogs`),
+        where('logDate', '>=', sevenDaysAgo.toISOString())
+    );
+  }, [user, firestore, sevenDaysAgo]);
+  const { data: mealLogs, isLoading: isLoadingMeals } = useCollection<MealLog>(mealLogsQuery);
+
+  const trainingSessionsQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(
+        collection(firestore, `perfiles/${user.uid}/trainingSessions`),
+        where('logDate', '>=', sevenDaysAgo.toISOString())
+    );
+  }, [user, firestore, sevenDaysAgo]);
+  const { data: trainingSessions, isLoading: isLoadingTrainings } = useCollection<TrainingSession>(trainingSessionsQuery);
+
+  const isLoading = isLoadingMeals || isLoadingTrainings;
+
+  const { dailyConsumed, energyBalanceData } = useMemo(() => {
+    const today = startOfDay(new Date());
+    const todayStr = today.toISOString().split('T')[0];
+
+    const todayLogs = mealLogs?.filter(log => log.logDate.startsWith(todayStr)) ?? [];
+    const todaySessions = trainingSessions?.filter(session => session.logDate.startsWith(todayStr)) ?? [];
+
+    const consumed = {
+        calories: todayLogs.reduce((sum, log) => sum + log.totalCalories, 0),
+        protein: todayLogs.reduce((sum, log) => sum + log.totalProtein, 0),
+        carbs: todayLogs.reduce((sum, log) => sum + log.totalCarbohydrates, 0),
+        fats: todayLogs.reduce((sum, log) => sum + log.totalFat, 0),
+        expenditure: todaySessions.reduce((sum, session) => sum + session.estimatedCaloriesBurned, 0),
+    };
+    
+    const balanceData = [...Array(7)].map((_, i) => {
+        const day = startOfDay(subDays(new Date(), i));
+        const dayStr = day.toISOString().split('T')[0];
+        
+        const dayLogs = mealLogs?.filter(log => log.logDate.startsWith(dayStr)) ?? [];
+        const daySessions = trainingSessions?.filter(session => session.logDate.startsWith(dayStr)) ?? [];
+
+        return {
+            day: format(day, 'E', { locale: es }),
+            intake: dayLogs.reduce((sum, log) => sum + log.totalCalories, 0),
+            expenditure: daySessions.reduce((sum, session) => sum + session.estimatedCaloriesBurned, 0),
+        };
+    }).reverse();
+
+    return { dailyConsumed: consumed, energyBalanceData: balanceData };
+
+  }, [mealLogs, trainingSessions]);
 
   const renderMacroProgress = (key: 'protein' | 'carbs' | 'fats', title: string) => {
     const consumed = dailyConsumed[key as keyof typeof dailyConsumed];
     const target = dailyTargets[key as keyof typeof dailyTargets];
     const percentage = target > 0 ? (consumed / target) * 100 : 0;
+    
+    if (isLoading) {
+        return (
+            <div>
+                <div className="flex justify-between items-baseline mb-1">
+                    <h4 className="text-sm font-medium text-muted-foreground">{title}</h4>
+                    <Skeleton className="h-5 w-1/3" />
+                </div>
+                <Skeleton className="h-2 w-full" />
+            </div>
+        );
+    }
+    
     return (
       <div>
         <div className="flex justify-between items-baseline mb-1">
@@ -78,6 +131,21 @@ export default function DashboardPage() {
   
   const DailyCalorieSummary = () => {
     const netBalance = dailyConsumed.calories - dailyConsumed.expenditure;
+    
+    if (isLoading) {
+        return (
+          <div>
+            <h3 className="text-lg font-bold tracking-tight mb-4">Balance Calórico del Día</h3>
+            <div className="p-4 rounded-md border bg-secondary/50 space-y-4">
+                <div className="flex justify-between items-center"><span className="text-muted-foreground">Ingesta</span><Skeleton className="h-5 w-1/4" /></div>
+                <div className="flex justify-between items-center"><span className="text-muted-foreground">Gasto</span><Skeleton className="h-5 w-1/4" /></div>
+                <Separator />
+                <div className="flex justify-between items-center"><span className="font-medium">Balance Neto</span><Skeleton className="h-6 w-1/4" /></div>
+                <div className="flex justify-between items-center text-sm"><span className="text-muted-foreground">Objetivo Calórico</span><Skeleton className="h-5 w-1/4" /></div>
+            </div>
+        </div>
+        )
+    }
 
     return (
       <div>
@@ -172,6 +240,11 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
                <ChartContainer config={chartConfig} className="h-[300px] w-full">
+                {isLoading ? (
+                    <div className="flex items-center justify-center h-full">
+                        <Skeleton className="h-full w-full" />
+                    </div>
+                ) : (
                 <ResponsiveContainer>
                   <BarChart data={energyBalanceData} margin={{ top: 20, right: 20, left: -20, bottom: 5 }} barGap={4}>
                     <CartesianGrid vertical={false} strokeDasharray="3 3" />
@@ -192,6 +265,7 @@ export default function DashboardPage() {
                     <Bar dataKey="expenditure" fill="var(--color-expenditure)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
+                )}
               </ChartContainer>
             </CardContent>
           </Card>
