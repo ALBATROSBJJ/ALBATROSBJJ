@@ -20,6 +20,16 @@ type FoodItem = {
   carbohydratesPer100g: number;
 };
 
+// Mock data to show if the database is empty
+const mockAlimentos: FoodItem[] = [
+    { id: '1', name: 'Pechuga de Pollo', category: 'Carnes', caloriesPer100g: 165, proteinPer100g: 31, fatPer100g: 3.6, carbohydratesPer100g: 0 },
+    { id: '2', name: 'Arroz Integral', category: 'Cereales', caloriesPer100g: 111, proteinPer100g: 2.6, fatPer100g: 0.9, carbohydratesPer100g: 23 },
+    { id: '3', name: 'Brócoli', category: 'Verduras', caloriesPer100g: 34, proteinPer100g: 2.8, fatPer100g: 0.4, carbohydratesPer100g: 7 },
+    { id: '4', name: 'Huevo', category: 'General', caloriesPer100g: 155, proteinPer100g: 13, fatPer100g: 11, carbohydratesPer100g: 1.1 },
+    { id: '5', name: 'Salmón', category: 'Pescados', caloriesPer100g: 208, proteinPer100g: 20, fatPer100g: 13, carbohydratesPer100g: 0 },
+];
+
+
 export default function AlimentosPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const firestore = useFirestore();
@@ -30,10 +40,14 @@ export default function AlimentosPage() {
   }, [firestore]);
 
   const { data: alimentos, isLoading } = useCollection<FoodItem>(alimentosQuery);
+  
+  const displayData = (alimentos && alimentos.length > 0) ? alimentos : (isLoading ? [] : mockAlimentos);
 
-  const filteredAlimentos = alimentos?.filter(alimento =>
+  const filteredAlimentos = displayData.filter(alimento =>
     (alimento?.name ?? '').toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
+  const isUsingMockData = !isLoading && (!alimentos || alimentos.length === 0);
 
   return (
     <div className="p-4 md:p-8 space-y-8">
@@ -57,6 +71,13 @@ export default function AlimentosPage() {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
+
+          {isUsingMockData && (
+            <div className="mt-4 p-3 text-sm text-center bg-secondary/50 border border-dashed rounded-md">
+                <p><span className="font-bold">Mostrando datos de ejemplo.</span><br/> Tu colección 'alimentos' en Firestore está vacía. Agrega documentos para ver tus datos aquí.</p>
+            </div>
+          )}
+
           <div className="mt-6 border rounded-md">
             {isLoading ? (
               <div className="space-y-4 p-4">
@@ -82,9 +103,9 @@ export default function AlimentosPage() {
                       </TableRow>
                     ))
                   ) : (
-                    <TableRow>
+                     <TableRow>
                       <TableCell colSpan={2} className="text-center h-24">
-                        {alimentos === null && !isLoading ? "La base de datos puede estar vacía o no se pudo cargar." : "No se encontraron alimentos."}
+                        {searchTerm ? "No se encontraron alimentos con ese nombre." : "No hay alimentos para mostrar."}
                       </TableCell>
                     </TableRow>
                   )}
