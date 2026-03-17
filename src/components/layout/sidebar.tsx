@@ -25,6 +25,10 @@ import {
   AppWindow,
 } from 'lucide-react';
 import { Logo } from '@/components/logo';
+import { useAuth } from '@/firebase';
+import { initiateSignOut } from '@/firebase/non-blocking-login';
+import { useToast } from '@/hooks/use-toast';
+import type { AuthError } from 'firebase/auth';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -40,6 +44,19 @@ const logoutItem = { href: '/login', label: 'Cerrar Sesión', icon: LogOut };
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const auth = useAuth();
+  const { toast } = useToast();
+
+  const handleLogout = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    initiateSignOut(auth, (error: AuthError) => {
+      toast({
+        variant: "destructive",
+        title: "Error al Cerrar Sesión",
+        description: error.message,
+      });
+    });
+  }
 
   const isActive = (href: string) => {
     return pathname === href;
@@ -90,7 +107,7 @@ export function AppSidebar() {
                     asChild
                     tooltip={{ children: logoutItem.label }}
                   >
-                    <Link href={logoutItem.href}>
+                    <Link href={logoutItem.href} onClick={handleLogout}>
                         <logoutItem.icon />
                         <span>{logoutItem.label}</span>
                     </Link>
