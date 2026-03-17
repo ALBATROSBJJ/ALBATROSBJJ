@@ -70,11 +70,7 @@ export default function AlimentosPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>Alimento</TableHead>
-                    <TableHead>Categoría</TableHead>
-                    <TableHead className="text-right">Calorías</TableHead>
-                    <TableHead className="text-right">Proteína</TableHead>
-                    <TableHead className="text-right">Grasas</TableHead>
-                    <TableHead className="text-right">Carbs</TableHead>
+                    <TableHead className="text-right">Calorías (por 100g)</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -82,16 +78,12 @@ export default function AlimentosPage() {
                     filteredAlimentos.map(item => (
                       <TableRow key={item.id}>
                         <TableCell className="font-medium">{item.name}</TableCell>
-                        <TableCell>{item.category}</TableCell>
                         <TableCell className="text-right">{item.caloriesPer100g} kcal</TableCell>
-                        <TableCell className="text-right">{item.proteinPer100g}g</TableCell>
-                        <TableCell className="text-right">{item.fatPer100g}g</TableCell>
-                        <TableCell className="text-right">{item.carbohydratesPer100g}g</TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center h-24">
+                      <TableCell colSpan={2} className="text-center h-24">
                         {alimentos === null && !isLoading ? "La base de datos puede estar vacía o no se pudo cargar." : "No se encontraron alimentos."}
                       </TableCell>
                     </TableRow>
