@@ -1,3 +1,4 @@
+
 /**
  * Core Philosophy: This ruleset enforces a strict user-ownership security model. All user-generated
  * content is stored in private subcollections under a path dedicated to that user. This ensures
@@ -169,7 +170,7 @@ service cloud.firestore {
      * @principle Enforces document ownership via path and validates relational integrity by checking the internal 'userId' field.
      */
     match /perfiles/{userId}/mealLogs/{mealLogId} {
-      allow get, list: if request.auth != null && request.auth.uid == userId;
+      allow get, list: if isOwner(userId);
       allow create: if isCreatingOwnChildDoc(userId);
       allow update: if isUpdatingOwnChildDoc(userId);
       allow delete: if isExistingOwner(userId);
@@ -197,7 +198,7 @@ service cloud.firestore {
      * @principle Enforces document ownership via path and validates relational integrity by checking the internal 'userId' field.
      */
     match /perfiles/{userId}/trainingSessions/{trainingSessionId} {
-      allow get, list: if request.auth != null && request.auth.uid == userId;
+      allow get, list: if isOwner(userId);
       allow create: if isCreatingOwnChildDoc(userId);
       allow update: if isUpdatingOwnChildDoc(userId);
       allow delete: if isExistingOwner(userId);
@@ -214,20 +215,6 @@ service cloud.firestore {
       allow get, list: if isOwner(userId);
       allow create: if isCreatingOwnRecipe(userId);
       allow update: if isUpdatingOwnRecipe(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-		
-    /**
-     * @description Controls access to ingredients within a user's private recipe.
-     * @path /perfiles/{userId}/recipes/{recipeId}/recipeIngredients/{recipeIngredientId}
-     * @allow (create) An authenticated user can add an ingredient to their own recipe.
-     * @deny (get) A user cannot read ingredients from another user's recipe.
-     * @principle Inherits ownership from the path and validates the 'recipeId' field to ensure relational integrity with the parent recipe.
-     */
-    match /perfiles/{userId}/recipes/{recipeId}/recipeIngredients/{recipeIngredientId} {
-      allow get, list: if isOwner(userId);
-      allow create: if isOwner(userId) && isCreatingNestedChildDoc(recipeId, 'recipeId');
-      allow update: if isExistingOwner(userId) && isUpdatingNestedChildDoc('recipeId');
       allow delete: if isExistingOwner(userId);
     }
 
@@ -252,3 +239,5 @@ service cloud.firestore {
     }
   }
 }
+
+    

@@ -1,6 +1,7 @@
+
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -13,9 +14,12 @@ import { getTacticalRecipes } from './actions';
 import type { GenerateTacticalRecipesOutput } from '@/ai/flows/generate-tactical-recipes';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { Clock, Zap, Users, List, ChefHat, BrainCircuit, Sparkles } from 'lucide-react';
+import { Clock, Zap, Users, List, ChefHat, BrainCircuit, Sparkles, Bookmark } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
+import { useDailyData } from '@/context/DailyDataProvider';
+import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
+import { collection, serverTimestamp } from 'firebase/firestore';
 
 const formSchema = z.object({
   weightKg: z.coerce.number().min(30, "Peso debe ser realista."),
@@ -27,79 +31,16 @@ const formSchema = z.object({
 });
 
 type FormValues = z.infer<typeof formSchema>;
-
-const RecipeCard = ({ recipe }: { recipe: GenerateTacticalRecipesOutput['recipes'][0] }) => (
-  <Card>
-    <CardHeader>
-      <CardTitle className="font-black tracking-tighter text-primary">{recipe.name}</CardTitle>
-      <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground pt-2">
-        <div className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> Prep: {recipe.prepTimeMinutes} min</div>
-        <div className="flex items-center gap-1.5"><Zap className="h-4 w-4" /> Cocción: {recipe.cookTimeMinutes} min</div>
-        <div className="flex items-center gap-1.5"><Users className="h-4 w-4" /> Porciones: {recipe.servings}</div>
-      </div>
-    </CardHeader>
-    <CardContent>
-      <div className="flex flex-wrap gap-2 mb-4">
-        <Badge variant="secondary">CAL: {recipe.macros.calories}</Badge>
-        <Badge variant="secondary">P: {recipe.macros.proteinG}g</Badge>
-        <Badge variant="secondary">G: {recipe.macros.fatG}g</Badge>
-        <Badge variant="secondary">C: {recipe.macros.carbsG}g</Badge>
-      </div>
-      <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="ingredients">
-          <AccordionTrigger><List className="h-4 w-4 mr-2"/>Ingredientes</AccordionTrigger>
-          <AccordionContent>
-            <ul className="list-disc pl-5 space-y-1 font-mono text-sm">
-              {recipe.ingredients.map((ing, i) => <li key={i}>{ing}</li>)}
-            </ul>
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="instructions">
-          <AccordionTrigger><ChefHat className="h-4 w-4 mr-2"/>Instrucciones</AccordionTrigger>
-          <AccordionContent>
-            <ol className="list-decimal pl-5 space-y-2 font-mono text-sm">
-              {recipe.instructions.map((step, i) => <li key={i}>{step}</li>)}
-            </ol>
-          </AccordionContent>
-        </AccordionItem>
-        <AccordionItem value="analysis">
-          <AccordionTrigger><BrainCircuit className="h-4 w-4 mr-2"/>Análisis del Coach</AccordionTrigger>
-          <AccordionContent>
-            <p className="italic text-sm">"{recipe.technicalAnalysis}"</p>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-    </CardContent>
-  </Card>
-);
-
-const LoadingSkeleton = () => (
-    <div className="space-y-6">
-        {[...Array(3)].map((_, i) => (
-            <Card key={i}>
-                <CardHeader>
-                    <Skeleton className="h-8 w-3/4" />
-                    <Skeleton className="h-4 w-1/2 mt-2" />
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex gap-2">
-                        <Skeleton className="h-6 w-16 rounded-full" />
-                        <Skeleton className="h-6 w-16 rounded-full" />
-                        <Skeleton className="h-6 w-16 rounded-full" />
-                    </div>
-                    <Skeleton className="h-10 w-full" />
-                    <Skeleton className="h-10 w-full" />
-                </CardContent>
-            </Card>
-        ))}
-    </div>
-);
+type Recipe = GenerateTacticalRecipesOutput['recipes'][0];
 
 
 export default function ChefIAPage() {
   const [recipes, setRecipes] = useState<GenerateTacticalRecipesOutput | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { biometrics, dailyTargets } = useDailyData();
+  const { user } = useUser();
+  const firestore = useFirestore();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -112,6 +53,17 @@ export default function ChefIAPage() {
       mealType: "any",
     },
   });
+
+  useEffect(() => {
+    form.reset({
+      weightKg: biometrics.weight,
+      calorieTarget: dailyTargets.calories,
+      proteinTargetG: dailyTargets.protein,
+      fatTargetG: dailyTargets.fats,
+      carbTargetG: dailyTargets.carbs,
+      mealType: "any",
+    });
+  }, [biometrics, dailyTargets, form]);
 
   const onSubmit = async (values: FormValues) => {
     setIsLoading(true);
@@ -128,6 +80,114 @@ export default function ChefIAPage() {
     }
     setIsLoading(false);
   };
+  
+  const handleSaveRecipe = (recipe: Recipe) => {
+    if (!user || !firestore) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Debes iniciar sesión para guardar recetas.",
+      });
+      return;
+    }
+
+    const recipeData = {
+      name: recipe.name,
+      prepTimeMinutes: recipe.prepTimeMinutes,
+      cookTimeMinutes: recipe.cookTimeMinutes,
+      servings: recipe.servings,
+      ingredients: recipe.ingredients,
+      instructions: recipe.instructions,
+      estimatedCaloriesPerServing: recipe.macros.calories,
+      estimatedProteinPerServing: recipe.macros.proteinG,
+      estimatedFatPerServing: recipe.macros.fatG,
+      estimatedCarbohydratesPerServing: recipe.macros.carbsG,
+      technicalAnalysis: recipe.technicalAnalysis,
+      generatedByUserId: user.uid,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    };
+    
+    const recipesRef = collection(firestore, `perfiles/${user.uid}/recipes`);
+    addDocumentNonBlocking(recipesRef, recipeData);
+
+    toast({
+      title: "Receta Guardada",
+      description: `"${recipe.name}" ha sido añadida a tu perfil.`,
+    });
+  };
+  
+  const RecipeCard = ({ recipe }: { recipe: Recipe }) => (
+    <Card>
+      <CardHeader>
+        <div className="flex justify-between items-start">
+            <CardTitle className="font-black tracking-tighter text-primary">{recipe.name}</CardTitle>
+            <Button variant="ghost" size="icon" onClick={() => handleSaveRecipe(recipe)} aria-label="Guardar receta">
+                <Bookmark className="h-5 w-5" />
+            </Button>
+        </div>
+        <div className="flex flex-wrap gap-x-4 gap-y-2 text-sm text-muted-foreground pt-2">
+          <div className="flex items-center gap-1.5"><Clock className="h-4 w-4" /> Prep: {recipe.prepTimeMinutes} min</div>
+          <div className="flex items-center gap-1.5"><Zap className="h-4 w-4" /> Cocción: {recipe.cookTimeMinutes} min</div>
+          <div className="flex items-center gap-1.5"><Users className="h-4 w-4" /> Porciones: {recipe.servings}</div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Badge variant="secondary">CAL: {recipe.macros.calories}</Badge>
+          <Badge variant="secondary">P: {recipe.macros.proteinG}g</Badge>
+          <Badge variant="secondary">G: {recipe.macros.fatG}g</Badge>
+          <Badge variant="secondary">C: {recipe.macros.carbsG}g</Badge>
+        </div>
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="ingredients">
+            <AccordionTrigger><List className="h-4 w-4 mr-2"/>Ingredientes</AccordionTrigger>
+            <AccordionContent>
+              <ul className="list-disc pl-5 space-y-1 font-mono text-sm">
+                {recipe.ingredients.map((ing, i) => <li key={i}>{ing}</li>)}
+              </ul>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="instructions">
+            <AccordionTrigger><ChefHat className="h-4 w-4 mr-2"/>Instrucciones</AccordionTrigger>
+            <AccordionContent>
+              <ol className="list-decimal pl-5 space-y-2 font-mono text-sm">
+                {recipe.instructions.map((step, i) => <li key={i}>{step}</li>)}
+              </ol>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="analysis">
+            <AccordionTrigger><BrainCircuit className="h-4 w-4 mr-2"/>Análisis del Coach</AccordionTrigger>
+            <AccordionContent>
+              <p className="italic text-sm">"{recipe.technicalAnalysis}"</p>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </CardContent>
+    </Card>
+  );
+
+  const LoadingSkeleton = () => (
+      <div className="space-y-6">
+          {[...Array(3)].map((_, i) => (
+              <Card key={i}>
+                  <CardHeader>
+                      <Skeleton className="h-8 w-3/4" />
+                      <Skeleton className="h-4 w-1/2 mt-2" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                      <div className="flex gap-2">
+                          <Skeleton className="h-6 w-16 rounded-full" />
+                          <Skeleton className="h-6 w-16 rounded-full" />
+                          <Skeleton className="h-6 w-16 rounded-full" />
+                      </div>
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-10 w-full" />
+                  </CardContent>
+              </Card>
+          ))}
+      </div>
+  );
 
   return (
     <div className="p-4 md:p-8 space-y-8">
@@ -228,3 +288,6 @@ export default function ChefIAPage() {
     </div>
   );
 }
+
+
+    

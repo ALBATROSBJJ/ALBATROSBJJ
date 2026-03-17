@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "UserProfile": {
@@ -393,13 +394,19 @@
           "type": "string",
           "description": "The name of the recipe."
         },
-        "description": {
-          "type": "string",
-          "description": "A brief description of the recipe."
+        "ingredients": {
+          "type": "array",
+          "description": "A list of ingredients for the recipe.",
+          "items": {
+            "type": "string"
+          }
         },
         "instructions": {
-          "type": "string",
-          "description": "Detailed steps for preparing the recipe."
+          "type": "array",
+          "description": "Detailed steps for preparing the recipe.",
+          "items": {
+            "type": "string"
+          }
         },
         "prepTimeMinutes": {
           "type": "number",
@@ -433,11 +440,6 @@
           "type": "string",
           "description": "AI-generated nutritional and physiological analysis of the recipe."
         },
-        "imageUrl": {
-          "type": "string",
-          "description": "URL to an image of the prepared recipe.",
-          "format": "uri"
-        },
         "generatedByUserId": {
           "type": "string",
           "description": "Reference to the UserProfile who generated or saved this recipe. (Relationship: UserProfile 0:1 Recipe)"
@@ -454,9 +456,9 @@
         }
       },
       "required": [
-        "id",
         "name",
         "instructions",
+        "ingredients",
         "prepTimeMinutes",
         "cookTimeMinutes",
         "servings",
@@ -465,53 +467,9 @@
         "estimatedFatPerServing",
         "estimatedCarbohydratesPerServing",
         "technicalAnalysis",
+        "generatedByUserId",
         "createdAt",
         "updatedAt"
-      ]
-    },
-    "RecipeIngredient": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "RecipeIngredient",
-      "type": "object",
-      "description": "Details a specific food item used as an ingredient in a Recipe.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the RecipeIngredient entity."
-        },
-        "recipeId": {
-          "type": "string",
-          "description": "Reference to the Recipe this ingredient belongs to. (Relationship: Recipe 1:N RecipeIngredient)"
-        },
-        "foodItemId": {
-          "type": "string",
-          "description": "Reference to the FoodItem used as an ingredient. (Relationship: FoodItem 1:N RecipeIngredient)"
-        },
-        "quantityValue": {
-          "type": "number",
-          "description": "The numeric value of the quantity for the ingredient (e.g., '2' for '2 cups')."
-        },
-        "unit": {
-          "type": "string",
-          "description": "The unit of measurement for the ingredient (e.g., 'grams', 'ml', 'cups', 'units')."
-        },
-        "notes": {
-          "type": "string",
-          "description": "Any additional preparation notes for the ingredient (e.g., 'chopped', 'sliced')."
-        },
-        "createdAt": {
-          "type": "string",
-          "description": "Timestamp when the recipe ingredient record was created.",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "recipeId",
-        "foodItemId",
-        "quantityValue",
-        "unit",
-        "createdAt"
       ]
     }
   },
@@ -658,33 +616,10 @@
             }
           ]
         }
-      },
-      {
-        "path": "/perfiles/{userId}/recipes/{recipeId}/recipeIngredients/{recipeIngredientId}",
-        "definition": {
-          "entityName": "RecipeIngredient",
-          "schema": {
-            "$ref": "#/backend/entities/RecipeIngredient"
-          },
-          "description": "Details a specific food item used as an ingredient in a Recipe. Ownership is inherited from the parent Recipe via the path structure, ensuring authorization independence. Includes `recipeId` field matching the parent ID.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user, matching `request.auth.uid`."
-            },
-            {
-              "name": "recipeId",
-              "description": "The unique identifier of the parent recipe."
-            },
-            {
-              "name": "recipeIngredientId",
-              "description": "The unique identifier for a specific ingredient within a recipe."
-            }
-          ]
-        }
       }
     ],
     "reasoning": "The Firestore structure is designed following the core principles of Authorization Independence, Structural Segregation, and Access Modeling to ensure security, scalability, and debuggability.\n\n**Authorization Independence:** All user-specific data, including UserProfile, BiometricMeasurements, MealLogs, FoodConsumptions, TrainingSessions, Recipes, and RecipeIngredients, is organized hierarchically under `/perfiles/{userId}/`. This path-based ownership ensures that authorization can be determined solely by matching `request.auth.uid` with the `{userId}` wildcard in the path. For example, for documents in `/perfiles/{userId}/biometricMeasurements/{biometricMeasurementId}`, the rule `allow read, write: if request.auth.uid == userId;` is sufficient and robust. For subcollections, such as `foodConsumptions` nested under `mealLogs` (e.g., `/perfiles/{userId}/mealLogs/{mealLogId}/foodConsumptions/{foodConsumptionId}`), the `userId` from the top-level path segment is inherently carried down. This means no `get()` calls are required in security rules to check the ownership of parent documents when accessing child documents, thereby eliminating hierarchical authorization dependencies. This design is critical for supporting atomic operations (transactions/batches) and simplifies rule debugging.\n\n**QAPs (Rules are not Filters):**\n1.  **Public Data (`/alimentos`):** The `/alimentos` collection, representing the public food catalog, is a top-level collection. It has a homogeneous security posture, allowing public read access. This structure inherently supports efficient `list` operations for all users (authenticated or unauthenticated) without requiring any client-side or rule-based filtering, directly addressing the QAP principle.\n2.  **Private Data (`/perfiles/{userId}/...`):** For all user-owned data, the hierarchical path `/perfiles/{userId}/...` ensures that `list` operations are implicitly secure. When a user queries `/perfiles/{request.auth.uid}/mealLogs`, Firestore's security rules will only grant access to documents under that specific user's path. This prevents users from inadvertently accessing or listing data belonging to other users, fulfilling the QAP principle for private data by making authorization explicit in the path rather than relying on query filters.\n\n**Structural Segregation:** Data with different security requirements is strictly segregated into distinct collections. For instance, public food items are in `/alimentos`, while private user profiles and their associated logs are under `/perfiles/{userId}/`. This prevents mixing data that requires different access levels in the same collection, making security rules simpler and less prone to errors."
   }
 }
+
     
