@@ -229,7 +229,7 @@ export default function ChefIAPage() {
                       <FormMessage />
                     </FormItem>
                   )} />
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="proteinTargetG" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Proteína (g)</FormLabel>
@@ -245,7 +245,7 @@ export default function ChefIAPage() {
                       </FormItem>
                     )} />
                   </div>
-                   <div className="grid grid-cols-2 gap-4">
+                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={form.control} name="fatTargetG" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Grasas (g)</FormLabel>

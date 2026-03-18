@@ -1,13 +1,14 @@
 'use client';
 
 import { AppSidebar, AppSidebarSkeleton } from "@/components/layout/sidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { DailyDataProvider } from "@/context/DailyDataProvider";
 import { ClientOnly } from "@/components/client-only";
 import { useUser } from "@/firebase";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Logo } from "@/components/logo";
 
 function FullPageLoader() {
   return (
@@ -48,7 +49,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <AppSidebar />
         </ClientOnly>
         <SidebarInset>
-          <div className="min-h-screen">
+          <header className="flex h-14 items-center justify-between border-b bg-background px-4 md:hidden">
+            <Logo />
+            <SidebarTrigger />
+          </header>
+          <div className="flex-1 overflow-y-auto">
             {children}
           </div>
         </SidebarInset>

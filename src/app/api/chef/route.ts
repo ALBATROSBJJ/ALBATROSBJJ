@@ -26,7 +26,7 @@ Genera un plan alimenticio con:
 
 Usa alimentos comunes en México.
 Organiza el resultado por comidas (desayuno, comida, cena).
-Incluye cantidades aproximadas en gramos. Responde SOLO en español. No uses inglés.
+Incluye cantidades aproximadas en gramos. Responde en español. No uses intglés.
 `;
 
     const result = await model.generateContent(prompt);

@@ -228,7 +228,7 @@ export default function BitacoraPage() {
                                     )}
                                 </div>
                                 <div className="flex items-center gap-2 ml-auto">
-                                    <div className="text-right text-xs text-muted-foreground whitespace-nowrap">
+                                    <div className="text-right text-xs text-muted-foreground">
                                         <span>{new Date(item.logDate).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
                                         <br/>
                                         <span>{new Date(item.logDate).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</span>
@@ -286,7 +286,7 @@ export default function BitacoraPage() {
                       <FormMessage />
                     </FormItem>
                   )} />
-                   <div className="grid grid-cols-3 gap-4">
+                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                      <FormField control={mealForm.control} name="totalProtein" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Proteína (g)</FormLabel>
@@ -332,7 +332,7 @@ export default function BitacoraPage() {
                       <FormMessage />
                     </FormItem>
                   )} />
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField control={trainingForm.control} name="durationMinutes" render={({ field }) => (
                       <FormItem>
                         <FormLabel>Duración (min)</FormLabel>
