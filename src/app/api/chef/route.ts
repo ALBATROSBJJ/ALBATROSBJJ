@@ -1,21 +1,31 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    // 🔐 Validar API key
+    const apiKey = process.env.GEMINI_API_KEY;
 
+    if (!apiKey) {
+      return Response.json(
+        { error: "Falta GEMINI_API_KEY" },
+        { status: 500 }
+      );
+    }
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+
+    const body = await req.json();
     const { calorias, proteina, carbs, grasas, tipo } = body;
 
     const model = genAI.getGenerativeModel({
-      model: "gemini-1.5-flash",
+      model: "gemini-1.5-flash-latest", // 🔥 mejor versión
     });
 
     const prompt = `
 Eres un nutricionista deportivo profesional.
 
-Responde únicamente en español, de forma clara y natural.
+Responde SIEMPRE en español.
+NO uses inglés en ninguna parte.
 
 Genera un plan alimenticio con:
 - Calorías: ${calorias}
@@ -26,7 +36,7 @@ Genera un plan alimenticio con:
 
 Usa alimentos comunes en México.
 Organiza el resultado por comidas (desayuno, comida, cena).
-Incluye cantidades aproximadas en gramos. Responde en español. No uses intglés.
+Incluye cantidades aproximadas en gramos.
 `;
 
     const result = await model.generateContent(prompt);
@@ -35,7 +45,11 @@ Incluye cantidades aproximadas en gramos. Responde en español. No uses intglés
     return Response.json({ result: text });
 
   } catch (error) {
-    console.error(error);
-    return Response.json({ error: "Error generando plan" }, { status: 500 });
+    console.error("ERROR GEMINI:", error);
+
+    return Response.json(
+      { error: "Error generando plan" },
+      { status: 500 }
+    );
   }
 }
