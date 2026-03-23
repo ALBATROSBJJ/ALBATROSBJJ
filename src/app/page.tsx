@@ -232,7 +232,7 @@ export default function WelcomePage() {
                         <br/>Cp: 97314. Merida Yucatán</p>
                     </div>
                 </a>
-                <div className="flex items-start gap-4">
+                <a href="https://wa.me/message/MLU5C2HUNOCEN1" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
                     <div className="bg-primary/10 text-primary p-4 rounded-lg">
                         <Phone className="h-8 w-8" />
                     </div>
@@ -240,7 +240,7 @@ export default function WelcomePage() {
                         <h3 className="text-xl font-bold">Teléfono</h3>
                         <p className="text-muted-foreground">+52 990 144 3886</p>
                     </div>
-                </div>
+                </a>
                  <div className="flex items-start gap-4">
                     <div className="bg-primary/10 text-primary p-4 rounded-lg">
                         <Mail className="h-8 w-8" />
