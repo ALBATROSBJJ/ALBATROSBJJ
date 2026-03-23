@@ -95,9 +95,8 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="https://images.unsplash.com/photo-1581009137052-c40971b4ab48?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt="Luchador preparándose para el combate"
-            data-ai-hint="fighter training"
+            src="/mibaner.png"
+            alt="Banner de Albatros"
             fill
             className="object-cover z-0"
             priority
