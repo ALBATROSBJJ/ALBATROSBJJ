@@ -199,7 +199,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                   <Card className="group overflow-hidden">
-                      <Image src="https://picsum.photos/seed/gloves/400/300" data-ai-hint="sparring gloves" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/combo.png" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Guantes de Sparring</h3>
                           <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para el combate diario.</p>
