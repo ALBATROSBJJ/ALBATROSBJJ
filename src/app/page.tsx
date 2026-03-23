@@ -120,26 +120,16 @@ export default function WelcomePage() {
           ref={(el) => (sectionRefs.current[1] = el)}
           className="min-h-screen flex items-center py-20"
         >
-          <div className="container mx-auto grid md:grid-cols-2 gap-12 items-center px-4">
-            <div className="space-y-6">
+          <div className="container mx-auto grid md:grid-cols-1 gap-12 items-center px-4">
+            <div className="space-y-6 md:text-center">
               <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Nuestra Misión: <span className="text-primary">Forjar Campeones</span></h2>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 En Albatros, no creemos en las casualidades. Creemos en la preparación implacable, la disciplina y la ciencia aplicada al rendimiento. Somos un equipo de nutricionistas, entrenadores y ex-atletas dedicados a una sola cosa: llevar tu potencial al límite.
               </p>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 Nuestra filosofía es simple: cada gramo de comida es una herramienta, cada entrenamiento es una misión y cada día es una oportunidad para ser más letal. Fusionamos la última tecnología en análisis biométrico con la experiencia real del combate para crear sistemas nutricionales que construyen máquinas de pelear.
               </p>
             </div>
-             <Card className="overflow-hidden shadow-2xl">
-              <Image
-                src="https://picsum.photos/seed/coach/800/600"
-                alt="Coach dando instrucciones"
-                data-ai-hint="coach athlete"
-                width={800}
-                height={600}
-                className="w-full h-auto object-cover"
-              />
-            </Card>
           </div>
         </section>
         
