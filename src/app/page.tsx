@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,13 @@ const sections = [
 export default function WelcomePage() {
   const [activeSection, setActiveSection] = useState('inicio');
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
+  const navRef = useRef<HTMLDivElement>(null);
+  const isDragging = useRef(false);
+  const startY = useRef(0);
+  const initialScrollTop = useRef(0);
+  const [isInteracting, setIsInteracting] = useState(false);
 
+  // Intersection Observer to set active section
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -30,7 +36,7 @@ export default function WelcomePage() {
           }
         });
       },
-      { rootMargin: '-50% 0px -50% 0px' }
+      { rootMargin: '-50% 0px -50% 0px', threshold: 0.5 }
     );
 
     sectionRefs.current.forEach((ref) => {
@@ -44,16 +50,107 @@ export default function WelcomePage() {
     };
   }, []);
 
-  const scrollToSection = (id: string) => {
+  const scrollToSection = useCallback((id: string, behavior: 'smooth' | 'auto' = 'smooth') => {
     const section = document.getElementById(id);
-    section?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    section?.scrollIntoView({ behavior, block: 'center' });
+  }, []);
+
+  const snapToSection = useCallback(() => {
+    const currentScroll = window.scrollY + window.innerHeight / 2;
+    let closestSectionId = sections[0].id;
+    let minDistance = Infinity;
+
+    sectionRefs.current.forEach((ref, index) => {
+      if (ref) {
+        const sectionTop = ref.offsetTop;
+        const sectionHeight = ref.offsetHeight;
+        const sectionCenter = sectionTop + sectionHeight / 2;
+        const distance = Math.abs(currentScroll - sectionCenter);
+
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestSectionId = sections[index].id;
+        }
+      }
+    });
+    scrollToSection(closestSectionId, 'smooth');
+  }, [scrollToSection]);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    isDragging.current = true;
+    startY.current = e.clientY;
+    initialScrollTop.current = window.scrollY;
+    setIsInteracting(true);
+    document.body.style.cursor = 'grabbing';
+    document.body.style.userSelect = 'none';
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      if (!isDragging.current) return;
+      const deltaY = moveEvent.clientY - startY.current;
+      const dragMultiplier = 3; // Adjust drag sensitivity
+      window.scrollTo(0, initialScrollTop.current - deltaY * dragMultiplier);
+    };
+
+    const onMouseUp = () => {
+      isDragging.current = false;
+      setIsInteracting(false);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      
+      window.removeEventListener('mousemove', onMouseMove);
+      window.removeEventListener('mouseup', onMouseUp);
+      
+      snapToSection();
+    };
+
+    window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('mouseup', onMouseUp);
+  };
+  
+  const handleTouchStart = (e: React.TouchEvent) => {
+    isDragging.current = true;
+    startY.current = e.touches[0].clientY;
+    initialScrollTop.current = window.scrollY;
+    setIsInteracting(true);
+
+    const onTouchMove = (moveEvent: TouchEvent) => {
+        if (!isDragging.current) return;
+        const deltaY = moveEvent.touches[0].clientY - startY.current;
+        const dragMultiplier = 3;
+        window.scrollTo(0, initialScrollTop.current - deltaY * dragMultiplier);
+    };
+
+    const onTouchEnd = () => {
+        isDragging.current = false;
+        setIsInteracting(false);
+        
+        window.removeEventListener('touchmove', onTouchMove);
+        window.removeEventListener('touchend', onTouchEnd);
+        
+        snapToSection();
+    };
+
+    window.addEventListener('touchmove', onTouchMove);
+    window.addEventListener('touchend', onTouchEnd);
   };
 
   return (
     <div className="relative bg-background text-foreground min-h-screen">
       {/* Pill Navigation */}
-      <nav className="fixed top-1/2 right-4 -translate-y-1/2 z-50 hidden md:flex">
-        <div className="flex flex-col items-center gap-3 bg-black/30 backdrop-blur-lg p-2 rounded-full border border-neutral-700">
+      <nav 
+        className={cn(
+            "fixed top-1/2 right-4 -translate-y-1/2 z-50 flex transition-all duration-300",
+            isInteracting ? "opacity-100 scale-105" : "opacity-70"
+        )}
+        onMouseEnter={() => setIsInteracting(true)}
+        onMouseLeave={() => { if(!isDragging.current) setIsInteracting(false); }}
+      >
+        <div 
+          ref={navRef}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          className="flex flex-col items-center gap-3 bg-black/30 backdrop-blur-lg p-2 rounded-full border border-neutral-700 cursor-grab active:cursor-grabbing"
+        >
           {sections.map((section) => (
             <button
               key={section.id}
@@ -67,7 +164,7 @@ export default function WelcomePage() {
                   activeSection === section.id ? 'bg-primary scale-150' : 'group-hover:bg-primary/80'
                 )}
               />
-              <span className="absolute right-full mr-3 px-2 py-1 bg-card border rounded-md text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              <span className="absolute right-full mr-3 px-2 py-1 bg-card border rounded-md text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden md:block">
                 {section.name}
               </span>
             </button>
@@ -95,7 +192,7 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="/Mibaner.png"
+            src="/prox.png"
             alt="Banner de Albatros"
             fill
             className="object-cover z-0"
@@ -139,7 +236,7 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
-            src="/Mibaner.png"
+            src="/prox.png"
             alt="Nuestro Rendimiento"
             fill
             className="object-cover z-0"
