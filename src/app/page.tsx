@@ -222,7 +222,7 @@ export default function WelcomePage() {
             <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Establecer <span className="text-primary">Contacto</span></h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">¿Listo para el siguiente nivel? Aquí nos encuentras. No pierdas nuestro tiempo.</p>
             <div className="mt-12 grid md:grid-cols-3 gap-8 text-left">
-                <div className="flex items-start gap-4">
+                <a href="https://maps.app.goo.gl/BMvCRRp3eTGmjU8K9" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
                     <div className="bg-primary/10 text-primary p-4 rounded-lg">
                         <MapPin className="h-8 w-8" />
                     </div>
@@ -231,7 +231,7 @@ export default function WelcomePage() {
                         <p className="text-muted-foreground">Calle 114, Cd. Caulcel Supermanzana 2,
                         <br/>Cp: 97314. Merida Yucatán</p>
                     </div>
-                </div>
+                </a>
                 <div className="flex items-start gap-4">
                     <div className="bg-primary/10 text-primary p-4 rounded-lg">
                         <Phone className="h-8 w-8" />
