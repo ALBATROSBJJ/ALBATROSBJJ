@@ -13,8 +13,8 @@ import { cn } from '@/lib/utils';
 const sections = [
   { id: 'inicio', name: 'Inicio' },
   { id: 'conocenos', name: 'Conócenos' },
+  { id: 'rendimiento', name: 'Rendimiento' },
   { id: 'servicios', name: 'Servicios' },
-  { id: 'productos', name: 'Productos' },
   { id: 'contacto', name: 'Contacto' },
 ];
 
@@ -133,22 +133,22 @@ export default function WelcomePage() {
           </div>
         </section>
         
-        {/* Section: Servicios */}
+        {/* Section: Rendimiento */}
         <section
-          id="servicios"
+          id="rendimiento"
           ref={(el) => (sectionRefs.current[2] = el)}
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
             src="/prox.png"
-            alt="Nuestros Servicios"
+            alt="Nuestro Rendimiento"
             fill
             className="object-cover z-0"
           />
           <div className="absolute inset-0 bg-black/70" />
           <div className="container mx-auto px-4 relative z-10">
               <div className="text-center mb-12">
-                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white">¿Qué <span className="text-primary">ofrecemos?</span></h2>
+                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white">Nuestro <span className="text-primary">Rendimiento</span></h2>
                   <p className="mt-4 text-lg text-white/80 max-w-3xl mx-auto">Arsenal completo para tu preparación. No dejamos nada al azar.</p>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
@@ -171,9 +171,9 @@ export default function WelcomePage() {
           </div>
         </section>
 
-        {/* Section: Productos */}
+        {/* Section: Servicios */}
         <section
-          id="productos"
+          id="servicios"
           ref={(el) => (sectionRefs.current[3] = el)}
           className="min-h-screen flex items-center py-20"
         >
@@ -184,35 +184,35 @@ export default function WelcomePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="group overflow-hidden">
-                      <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Proteína" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Proteína Isolatada</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Recuperación muscular de alta velocidad.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$1,200 MXN</p>
+                          <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
+                          <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
+                          <p className="text-primary font-bold text-lg mt-2">$600 MXN</p>
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/kick.png" data-ai-hint="creatine supplement" alt="Creatina" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/kick.png" data-ai-hint="creatine supplement" alt="Kick Boxing" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Creatina Monohidratada</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Potencia y fuerza explosiva garantizadas.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$800 MXN</p>
+                          <h3 className="text-xl font-bold">Kick Boxing</h3>
+                          <p className="text-muted-foreground text-sm mt-1">Entrenamiento de combate que combina golpes de puño y patadas.</p>
+                          <p className="text-primary font-bold text-lg mt-2">$600 MXN</p>
                       </CardContent>
                   </Card>
                   <Card className="group overflow-hidden">
-                      <Image src="/combo.png" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/combo.png" alt="Promoción" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Guantes de Sparring</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para el combate diario.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$2,500 MXN</p>
+                          <h3 className="text-xl font-bold">PROMOCION</h3>
+                          <p className="text-muted-foreground text-sm mt-1">Jiu Jitsu y Kick Boxing; complementandose como una.</p>
+                          <p className="text-primary font-bold text-lg mt-2">$900 MXN</p>
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/proximamente.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Rashguard Táctico</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Compresión y movilidad para grappling.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$950 MXN</p>
+                          <h3 className="text-xl font-bold">Proximamente</h3>
+                          <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
+                          <p className="text-primary font-bold text-lg mt-2">ESTAR ATENTOS...</p>
                       </CardContent>
                   </Card>
               </div>
