@@ -14,6 +14,7 @@ const sections = [
   { id: 'conocenos', name: 'Conócenos' },
   { id: 'rendimiento', name: 'Rendimiento' },
   { id: 'servicios', name: 'Servicios' },
+  { id: 'eventos', name: 'Eventos' },
   { id: 'contacto', name: 'Contacto' },
 ];
 
@@ -140,7 +141,8 @@ export default function WelcomePage() {
       <nav 
         className={cn(
             "fixed top-1/2 right-4 -translate-y-1/2 z-50 flex transition-all duration-300",
-            isInteracting ? "opacity-100 scale-105" : "opacity-50 scale-90"
+            isInteracting ? "opacity-100 scale-105" : "opacity-50 scale-90",
+            "hidden md:flex"
         )}
         onMouseEnter={() => setIsInteracting(true)}
         onMouseLeave={() => { if(!isDragging.current) setIsInteracting(false); }}
@@ -192,7 +194,7 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="/Mibaner.png"
+            src="/prox.png"
             alt="Banner de Albatros"
             fill
             className="object-cover z-0"
@@ -236,7 +238,7 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
-            src="/Mibaner.png"
+            src="/prox.png"
             alt="Nuestro Rendimiento"
             fill
             className="object-cover z-0"
@@ -250,17 +252,17 @@ export default function WelcomePage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
                     <Flame className="h-12 w-12 text-primary mb-4"/>
-                    <h3 className="text-2xl font-bold mb-2">Planes Nutricionales Tácticos</h3>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">Planes Nutricionales Tácticos</h3>
                     <p className="text-muted-foreground">Dietas personalizadas basadas en tu biometría, disciplina y objetivos. Máxima eficiencia energética y recuperación.</p>
                   </Card>
                   <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
                     <HeartPulse className="h-12 w-12 text-primary mb-4"/>
-                    <h3 className="text-2xl font-bold mb-2">Seguimiento Biométrico Avanzado</h3>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">Seguimiento Biométrico Avanzado</h3>
                     <p className="text-muted-foreground">Análisis de composición corporal, metabolismo y marcadores de rendimiento para ajustes precisos y en tiempo real.</p>
                   </Card>
                    <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
                     <BrainCircuit className="h-12 w-12 text-primary mb-4"/>
-                    <h3 className="text-2xl font-bold mb-2">Consultoría de Rendimiento</h3>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">Consultoría de Rendimiento</h3>
                     <p className="text-muted-foreground">Asesoramiento uno a uno para estrategias de corte de peso, picos de rendimiento y suplementación estratégica.</p>
                   </Card>
               </div>
@@ -304,7 +306,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/proximamente.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Proximamente</h3>
                           <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
@@ -315,10 +317,44 @@ export default function WelcomePage() {
            </div>
         </section>
 
+        {/* Section: Eventos */}
+        <section
+          id="eventos"
+          ref={(el) => (sectionRefs.current[4] = el)}
+          className="min-h-screen flex items-center py-20 bg-background"
+        >
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Próximos <span className="text-primary">Eventos</span></h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+                Mantente al día de nuestros próximos seminarios, competiciones y eventos especiales. No te quedes fuera del octágono.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <Card className="group overflow-hidden">
+                <Image src="/prox.png" data-ai-hint="seminar" alt="Seminario de Jiu-Jitsu" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Seminario de Guardia de la Riva</h3>
+                  <p className="text-muted-foreground text-sm mt-1">con el campeón mundial invitado.</p>
+                  <p className="text-primary font-bold text-lg mt-2">JUNIO 2024</p>
+                </CardContent>
+              </Card>
+              <Card className="group overflow-hidden">
+                <Image src="/prox.png" data-ai-hint="competition" alt="Torneo de Kickboxing" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Torneo Interno "Furia Albatros"</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Competencia de Kickboxing y Sparring.</p>
+                  <p className="text-primary font-bold text-lg mt-2">JULIO 2024</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
         {/* Section: Contacto */}
         <footer
           id="contacto"
-          ref={(el) => (sectionRefs.current[4] = el)}
+          ref={(el) => (sectionRefs.current[5] = el)}
           className="bg-card py-20"
         >
           <div className="container mx-auto text-center px-4">
