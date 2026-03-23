@@ -136,25 +136,32 @@ export default function WelcomePage() {
         <section
           id="servicios"
           ref={(el) => (sectionRefs.current[2] = el)}
-          className="min-h-screen flex items-center bg-secondary py-20"
+          className="min-h-screen flex items-center py-20 relative"
         >
-          <div className="container mx-auto px-4">
+          <Image
+            src="/mibaner.png"
+            alt="Nuestros Servicios"
+            fill
+            className="object-cover z-0"
+          />
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="container mx-auto px-4 relative z-10">
               <div className="text-center mb-12">
-                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Nuestros <span className="text-primary">Servicios de Élite</span></h2>
-                  <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Arsenal completo para tu preparación. No dejamos nada al azar.</p>
+                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white">Nuestros <span className="text-primary">Servicios de Élite</span></h2>
+                  <p className="mt-4 text-lg text-white/80 max-w-3xl mx-auto">Arsenal completo para tu preparación. No dejamos nada al azar.</p>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
-                  <Card className="p-8 text-center flex flex-col items-center">
+                  <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
                     <Flame className="h-12 w-12 text-primary mb-4"/>
                     <h3 className="text-2xl font-bold mb-2">Planes Nutricionales Tácticos</h3>
                     <p className="text-muted-foreground">Dietas personalizadas basadas en tu biometría, disciplina y objetivos. Máxima eficiencia energética y recuperación.</p>
                   </Card>
-                  <Card className="p-8 text-center flex flex-col items-center">
+                  <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
                     <HeartPulse className="h-12 w-12 text-primary mb-4"/>
                     <h3 className="text-2xl font-bold mb-2">Seguimiento Biométrico Avanzado</h3>
                     <p className="text-muted-foreground">Análisis de composición corporal, metabolismo y marcadores de rendimiento para ajustes precisos y en tiempo real.</p>
                   </Card>
-                   <Card className="p-8 text-center flex flex-col items-center">
+                   <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
                     <BrainCircuit className="h-12 w-12 text-primary mb-4"/>
                     <h3 className="text-2xl font-bold mb-2">Consultoría de Rendimiento</h3>
                     <p className="text-muted-foreground">Asesoramiento uno a uno para estrategias de corte de peso, picos de rendimiento y suplementación estratégica.</p>
