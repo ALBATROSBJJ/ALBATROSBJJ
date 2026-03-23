@@ -207,7 +207,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="https://picsum.photos/seed/rashguard/400/300" data-ai-hint="rashguard clothing" alt="Rashguard Táctico" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="https://placehold.co/400x300/27272a/e5e5e5?text=Proximamente" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Rashguard Táctico</h3>
                           <p className="text-muted-foreground text-sm mt-1">Compresión y movilidad para grappling.</p>
