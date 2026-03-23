@@ -247,7 +247,7 @@ export default function WelcomePage() {
                     </div>
                     <div>
                         <h3 className="text-xl font-bold">Email</h3>
-                        <p className="text-muted-foreground">contacto@albatros.mma</p>
+                        <p className="text-muted-foreground">administrador@albatrosbjj.com</p>
                     </div>
                 </div>
             </div>
