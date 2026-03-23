@@ -239,7 +239,7 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
-            src="/prox.png"
+            src="/Mibaner.png"
             alt="Nuestro Rendimiento"
             fill
             className="object-cover z-0"
@@ -283,7 +283,7 @@ export default function WelcomePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="group overflow-hidden">
-                      <Image src="/prox.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
                           <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
@@ -383,19 +383,19 @@ export default function WelcomePage() {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
               <Card className="group overflow-hidden">
-                <Image src="/kick.png" data-ai-hint="jiu-jitsu gi" alt="Gi de Competición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <Image src="/camisabjj.png" data-ai-hint="jiu-jitsu gi" alt="Gi de Competición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                 <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Gi de Competición</h3>
+                  <h3 className="text-xl font-bold">Rashguard bjj Albatros Team.</h3>
                   <p className="text-muted-foreground text-sm mt-1">Ligero, resistente y diseñado para la victoria.</p>
-                  <p className="text-primary font-bold text-lg mt-2">$2,500 MXN</p>
+                  <p className="text-primary font-bold text-lg mt-2">$300 MXN</p>
                 </CardContent>
               </Card>
               <Card className="group overflow-hidden">
-                <Image src="/combo.png" data-ai-hint="sparring gloves" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <Image src="/camisakick.png" data-ai-hint="sparring gloves" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                 <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Guantes de Sparring 16oz</h3>
+                  <h3 className="text-xl font-bold">Jersey Kick Boxing Albtatros Team.</h3>
                   <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para asaltos intensos.</p>
-                  <p className="text-primary font-bold text-lg mt-2">$1,200 MXN</p>
+                  <p className="text-primary font-bold text-lg mt-2">$300 MXN</p>
                 </CardContent>
               </Card>
             </div>
