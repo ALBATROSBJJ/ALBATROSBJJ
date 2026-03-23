@@ -95,7 +95,7 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="/mibaner.png"
+            src="/Mibaner.png"
             alt="Banner de Albatros"
             fill
             className="object-cover z-0"
@@ -139,7 +139,7 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
-            src="/mibaner.png"
+            src="/Mibaner.png"
             alt="Nuestros Servicios"
             fill
             className="object-cover z-0"
