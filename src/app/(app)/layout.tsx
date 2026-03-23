@@ -50,7 +50,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <AppSidebar />
           </ClientOnly>
           <SidebarInset>
-            <header className="flex h-14 items-center justify-between border-b bg-background px-4 md:hidden">
+            <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/90 backdrop-blur-sm px-4 md:hidden">
               <Logo />
               <SidebarTrigger />
             </header>

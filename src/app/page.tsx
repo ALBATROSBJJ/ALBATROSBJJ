@@ -76,7 +76,7 @@ export default function WelcomePage() {
       </nav>
 
       {/* Header */}
-       <header className="fixed top-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-sm">
+       <header className="fixed top-0 left-0 right-0 z-40 bg-gray-900/60 backdrop-blur-sm">
         <div className="container mx-auto flex h-20 items-center justify-between px-4">
           <Logo />
           <Button asChild>
@@ -95,7 +95,7 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="https://images.unsplash.com/photo-1618218152289-e850b11b71d6"
+            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="Luchador preparándose para el combate"
             data-ai-hint="fighter training"
             fill
