@@ -95,7 +95,7 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            src="https://images.unsplash.com/photo-1581009137052-c40971b4ab48?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             alt="Luchador preparándose para el combate"
             data-ai-hint="fighter training"
             fill
@@ -238,7 +238,7 @@ export default function WelcomePage() {
                     </div>
                     <div>
                         <h3 className="text-xl font-bold">Teléfono</h3>
-                        <p className="text-muted-foreground">+52 55 1234 5678</p>
+                        <p className="text-muted-foreground">+52 990 144 3886</p>
                     </div>
                 </div>
                  <div className="flex items-start gap-4">
