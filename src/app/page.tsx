@@ -198,6 +198,22 @@ export default function WelcomePage() {
                           <p className="text-primary font-bold text-lg mt-2">$800 MXN</p>
                       </CardContent>
                   </Card>
+                  <Card className="group overflow-hidden">
+                      <Image src="https://picsum.photos/seed/gloves/400/300" data-ai-hint="sparring gloves" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <CardContent className="p-4">
+                          <h3 className="text-xl font-bold">Guantes de Sparring</h3>
+                          <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para el combate diario.</p>
+                          <p className="text-primary font-bold text-lg mt-2">$2,500 MXN</p>
+                      </CardContent>
+                  </Card>
+                   <Card className="group overflow-hidden">
+                      <Image src="https://picsum.photos/seed/rashguard/400/300" data-ai-hint="rashguard clothing" alt="Rashguard Táctico" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <CardContent className="p-4">
+                          <h3 className="text-xl font-bold">Rashguard Táctico</h3>
+                          <p className="text-muted-foreground text-sm mt-1">Compresión y movilidad para grappling.</p>
+                          <p className="text-primary font-bold text-lg mt-2">$950 MXN</p>
+                      </CardContent>
+                  </Card>
               </div>
            </div>
         </section>
