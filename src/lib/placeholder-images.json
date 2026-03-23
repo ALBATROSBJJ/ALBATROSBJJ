@@ -3,7 +3,7 @@
     {
       "id": "albatros-logo",
       "description": "The main logo for Albatros",
-      "imageUrl": "https://picsum.photos/seed/albatroslogo/32/32",
+      "imageUrl": "/milogo.png",
       "imageHint": "logo"
     }
   ]
