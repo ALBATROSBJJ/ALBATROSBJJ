@@ -18,6 +18,7 @@ import { Logo } from "@/components/logo";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth, useFirestore, useUser, setDocumentNonBlocking } from "@/firebase";
 import { initiateEmailSignUp } from "@/firebase/non-blocking-login";
+import { Home } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio."),
@@ -101,7 +102,10 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-card">
+      <Link href="/" className="absolute top-4 left-4">
+        <Button variant="outline"><Home className="mr-2 h-4 w-4"/>Volver al Inicio</Button>
+      </Link>
       <Card className="w-full max-w-sm mx-auto">
         <CardHeader className="text-center">
            <div className="flex justify-center mb-4">

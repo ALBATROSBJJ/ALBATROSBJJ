@@ -18,6 +18,7 @@ import { initiateEmailSignIn, initiatePasswordReset } from "@/firebase/non-block
 import type { AuthError } from "firebase/auth";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Home } from "lucide-react";
 
 const formSchema = z.object({
   email: z.string().email("Por favor, introduce un email válido."),
@@ -105,7 +106,10 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="flex items-center justify-center min-h-screen p-4 bg-card">
+      <Link href="/" className="absolute top-4 left-4">
+        <Button variant="outline"><Home className="mr-2 h-4 w-4"/>Volver al Inicio</Button>
+      </Link>
       <Card className="w-full max-w-sm mx-auto">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">

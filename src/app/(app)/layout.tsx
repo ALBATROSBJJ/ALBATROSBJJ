@@ -39,25 +39,27 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [user, isUserLoading, router]);
 
   if (isUserLoading || !user) {
-    return <FullPageLoader />;
+    return <div className="dark"><FullPageLoader /></div>;
   }
   
   return (
-    <DailyDataProvider>
-      <SidebarProvider>
-        <ClientOnly fallback={<AppSidebarSkeleton />}>
-          <AppSidebar />
-        </ClientOnly>
-        <SidebarInset>
-          <header className="flex h-14 items-center justify-between border-b bg-background px-4 md:hidden">
-            <Logo />
-            <SidebarTrigger />
-          </header>
-          <div className="flex-1 overflow-y-auto">
-            {children}
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    </DailyDataProvider>
+    <div className="dark">
+      <DailyDataProvider>
+        <SidebarProvider>
+          <ClientOnly fallback={<AppSidebarSkeleton />}>
+            <AppSidebar />
+          </ClientOnly>
+          <SidebarInset>
+            <header className="flex h-14 items-center justify-between border-b bg-background px-4 md:hidden">
+              <Logo />
+              <SidebarTrigger />
+            </header>
+            <div className="flex-1 overflow-y-auto">
+              {children}
+            </div>
+          </SidebarInset>
+        </SidebarProvider>
+      </DailyDataProvider>
+    </div>
   );
 }
