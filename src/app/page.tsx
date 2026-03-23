@@ -192,7 +192,7 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="/prox.png"
+            src="/Mibaner.png"
             alt="Banner de Albatros"
             fill
             className="object-cover z-0"
@@ -236,7 +236,7 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
-            src="/prox.png"
+            src="/Mibaner.png"
             alt="Nuestro Rendimiento"
             fill
             className="object-cover z-0"
@@ -304,7 +304,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/proximamente.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Proximamente</h3>
                           <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
