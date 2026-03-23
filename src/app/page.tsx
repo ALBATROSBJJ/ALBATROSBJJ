@@ -228,8 +228,8 @@ export default function WelcomePage() {
                     </div>
                     <div>
                         <h3 className="text-xl font-bold">Ubicación</h3>
-                        <p className="text-muted-foreground">Av. de los Insurgentes Sur 123,
-                        <br/>Colonia Roma, CDMX, México</p>
+                        <p className="text-muted-foreground">Calle 114, Cd. Caulcel Supermanzana 2,
+                        <br/>Cp: 97314. Merida Yucatán</p>
                     </div>
                 </div>
                 <div className="flex items-start gap-4">
