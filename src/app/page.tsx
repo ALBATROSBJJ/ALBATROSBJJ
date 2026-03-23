@@ -140,7 +140,7 @@ export default function WelcomePage() {
       <nav 
         className={cn(
             "fixed top-1/2 right-4 -translate-y-1/2 z-50 flex transition-all duration-300",
-            isInteracting ? "opacity-100 scale-105" : "opacity-70"
+            isInteracting ? "opacity-100 scale-105" : "opacity-50 scale-90"
         )}
         onMouseEnter={() => setIsInteracting(true)}
         onMouseLeave={() => { if(!isDragging.current) setIsInteracting(false); }}
@@ -304,7 +304,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/proximamente.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Proximamente</h3>
                           <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
