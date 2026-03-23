@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -53,7 +52,7 @@ export default function WelcomePage() {
   return (
     <div className="relative bg-background text-foreground min-h-screen">
       {/* Pill Navigation */}
-      <nav className="fixed top-1/2 right-4 -translate-y-1/2 z-50">
+      <nav className="fixed top-1/2 right-4 -translate-y-1/2 z-50 hidden md:flex">
         <div className="flex flex-col items-center gap-3 bg-black/30 backdrop-blur-lg p-2 rounded-full border border-neutral-700">
           {sections.map((section) => (
             <button
@@ -104,8 +103,8 @@ export default function WelcomePage() {
           />
           <div className="absolute inset-0 bg-black/60" />
           <div className="relative z-10 text-center text-white p-4">
-            <h1 className="font-headline text-6xl md:text-8xl tracking-wider text-primary">ALBATROS</h1>
-            <p className="mt-4 text-xl md:text-2xl font-light max-w-2xl mx-auto">
+            <h1 className="font-headline text-5xl md:text-8xl tracking-wider text-primary">ALBATROS</h1>
+            <p className="mt-4 text-lg md:text-2xl font-light max-w-2xl mx-auto">
               Donde la ciencia y el combate se encuentran. Nutrición táctica para atletas de élite.
             </p>
             <Button size="lg" className="mt-8 font-bold text-lg" onClick={() => scrollToSection('conocenos')}>
@@ -118,11 +117,11 @@ export default function WelcomePage() {
         <section
           id="conocenos"
           ref={(el) => (sectionRefs.current[1] = el)}
-          className="min-h-screen flex items-center py-20"
+          className="min-h-screen flex items-center py-20 px-4"
         >
-          <div className="container mx-auto grid md:grid-cols-1 gap-12 items-center px-4">
-            <div className="space-y-6 md:text-center">
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Nuestra Misión: <span className="text-primary">Forjar Campeones</span></h2>
+          <div className="container mx-auto">
+            <div className="space-y-6 text-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Nuestra Misión: <span className="text-primary">Forjar Campeones</span></h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
                 En Albatros, no creemos en las casualidades. Creemos en la preparación implacable, la disciplina y la ciencia aplicada al rendimiento. Somos un equipo de nutricionistas, entrenadores y ex-atletas dedicados a una sola cosa: llevar tu potencial al límite.
               </p>
@@ -148,10 +147,10 @@ export default function WelcomePage() {
           <div className="absolute inset-0 bg-black/70" />
           <div className="container mx-auto px-4 relative z-10">
               <div className="text-center mb-12">
-                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white">Nuestro <span className="text-primary">Rendimiento</span></h2>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white">Nuestro <span className="text-primary">Rendimiento</span></h2>
                   <p className="mt-4 text-lg text-white/80 max-w-3xl mx-auto">Arsenal completo para tu preparación. No dejamos nada al azar.</p>
               </div>
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
                     <Flame className="h-12 w-12 text-primary mb-4"/>
                     <h3 className="text-2xl font-bold mb-2">Planes Nutricionales Tácticos</h3>
@@ -179,7 +178,7 @@ export default function WelcomePage() {
         >
            <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
-                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Nuestros <span className="text-primary">Servicios</span></h2>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Nuestros <span className="text-primary">Servicios</span></h2>
                    <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Nuestro espacio multi disciplinar y complementario.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -208,7 +207,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/proximamente.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Proximamente</h3>
                           <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
@@ -226,11 +225,11 @@ export default function WelcomePage() {
           className="bg-card py-20"
         >
           <div className="container mx-auto text-center px-4">
-            <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Establecer <span className="text-primary">Contacto</span></h2>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Establecer <span className="text-primary">Contacto</span></h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">¿Listo para el siguiente nivel? Aquí nos encuentras. No pierdas nuestro tiempo.</p>
-            <div className="mt-12 grid md:grid-cols-3 gap-8 text-left">
-                <a href="https://maps.app.goo.gl/BMvCRRp3eTGmjU8K9" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
-                    <div className="bg-primary/10 text-primary p-4 rounded-lg">
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+                <a href="https://maps.app.goo.gl/BMvCRRp3eTGmjU8K9" target="_blank" rel="noopener noreferrer" className="flex flex-col md:flex-row items-center gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
+                    <div className="bg-primary/10 text-primary p-4 rounded-lg flex-shrink-0">
                         <MapPin className="h-8 w-8" />
                     </div>
                     <div>
@@ -239,8 +238,8 @@ export default function WelcomePage() {
                         <br/>Cp: 97314. Merida Yucatán</p>
                     </div>
                 </a>
-                <a href="https://wa.me/message/MLU5C2HUNOCEN1" target="_blank" rel="noopener noreferrer" className="flex items-start gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
-                    <div className="bg-primary/10 text-primary p-4 rounded-lg">
+                <a href="https://wa.me/message/MLU5C2HUNOCEN1" target="_blank" rel="noopener noreferrer" className="flex flex-col md:flex-row items-center gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
+                    <div className="bg-primary/10 text-primary p-4 rounded-lg flex-shrink-0">
                         <Phone className="h-8 w-8" />
                     </div>
                     <div>
@@ -248,8 +247,8 @@ export default function WelcomePage() {
                         <p className="text-muted-foreground">+52 990 144 3886</p>
                     </div>
                 </a>
-                 <div className="flex items-start gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
-                    <div className="bg-primary/10 text-primary p-4 rounded-lg">
+                 <div className="flex flex-col md:flex-row items-center gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
+                    <div className="bg-primary/10 text-primary p-4 rounded-lg flex-shrink-0">
                         <Mail className="h-8 w-8" />
                     </div>
                     <div>
