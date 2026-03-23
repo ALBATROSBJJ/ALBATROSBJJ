@@ -147,7 +147,7 @@ export default function WelcomePage() {
           <div className="absolute inset-0 bg-black/70" />
           <div className="container mx-auto px-4 relative z-10">
               <div className="text-center mb-12">
-                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white">Nuestros <span className="text-primary">Servicios de Élite</span></h2>
+                  <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-white">Qué <span className="text-primary">ofrecemos</span></h2>
                   <p className="mt-4 text-lg text-white/80 max-w-3xl mx-auto">Arsenal completo para tu preparación. No dejamos nada al azar.</p>
               </div>
               <div className="grid md:grid-cols-3 gap-8">
@@ -247,7 +247,7 @@ export default function WelcomePage() {
                         <p className="text-muted-foreground">+52 990 144 3886</p>
                     </div>
                 </a>
-                 <div className="flex items-start gap-4">
+                 <div className="flex items-start gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
                     <div className="bg-primary/10 text-primary p-4 rounded-lg">
                         <Mail className="h-8 w-8" />
                     </div>
