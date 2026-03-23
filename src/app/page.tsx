@@ -54,7 +54,7 @@ export default function WelcomePage() {
     <div className="relative bg-background text-foreground min-h-screen">
       {/* Pill Navigation */}
       <nav className="fixed top-1/2 right-4 -translate-y-1/2 z-50">
-        <div className="flex flex-col items-center gap-3 bg-card/50 backdrop-blur-sm p-2 rounded-full border">
+        <div className="flex flex-col items-center gap-3 bg-black/30 backdrop-blur-lg p-2 rounded-full border border-neutral-700">
           {sections.map((section) => (
             <button
               key={section.id}
@@ -208,7 +208,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/proximamente.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Proximamente</h3>
                           <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
