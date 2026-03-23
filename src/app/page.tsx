@@ -179,7 +179,7 @@ export default function WelcomePage() {
            <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                   <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Nuestros <span className="text-primary">Servicios</span></h2>
-                   <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Herramientas y combustible de grado profesional. Solo lo mejor.</p>
+                   <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Nuestro espacio multi disciplinar y complementario.</p>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                   <Card className="group overflow-hidden">
