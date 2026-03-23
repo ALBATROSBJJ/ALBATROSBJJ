@@ -183,7 +183,7 @@ export default function WelcomePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="group overflow-hidden">
-                      <Image src="https://picsum.photos/seed/protein/400/300" data-ai-hint="protein powder" alt="Proteína" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Proteína" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Proteína Isolatada</h3>
                           <p className="text-muted-foreground text-sm mt-1">Recuperación muscular de alta velocidad.</p>
