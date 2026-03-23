@@ -140,7 +140,7 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
-            src="/bjj.png"
+            src="/proximamente.png"
             alt="Nuestros Servicios"
             fill
             className="object-cover z-0"
@@ -267,3 +267,5 @@ export default function WelcomePage() {
     </div>
   );
 }
+
+    
