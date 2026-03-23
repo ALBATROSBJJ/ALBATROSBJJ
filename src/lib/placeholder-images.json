@@ -1,10 +1,3 @@
 {
-  "placeholderImages": [
-    {
-      "id": "albatros-logo",
-      "description": "The main logo for Albatros",
-      "imageUrl": "/milogo.png",
-      "imageHint": "logo"
-    }
-  ]
+  "placeholderImages": []
 }
