@@ -282,7 +282,7 @@ export default function WelcomePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="group overflow-hidden">
-                      <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/prox.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
                           <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
