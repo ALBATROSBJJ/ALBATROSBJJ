@@ -142,7 +142,7 @@ export default function WelcomePage() {
       <nav 
         className={cn(
             "fixed top-1/2 right-4 -translate-y-1/2 z-50 flex transition-all duration-300",
-            isInteracting ? "opacity-100 scale-105" : "opacity-50 scale-90",
+            isInteracting ? "opacity-100 scale-105" : "opacity-50 scale-90 hover:opacity-100 hover:scale-100",
             "hidden md:flex"
         )}
         onMouseEnter={() => setIsInteracting(true)}
@@ -236,49 +236,11 @@ export default function WelcomePage() {
         <section
           id="rendimiento"
           ref={(el) => (sectionRefs.current[2] = el)}
-          className="min-h-screen flex items-center py-20 relative"
+          className="min-h-screen flex items-center py-20 px-4"
         >
-          <Image
-            src="/prox.png"
-            alt="Nuestro Rendimiento"
-            fill
-            className="object-cover z-0"
-          />
-          <div className="absolute inset-0 bg-black/70" />
-          <div className="container mx-auto px-4 relative z-10">
-              <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white">Nuestro <span className="text-primary">Rendimiento</span></h2>
-                  <p className="mt-4 text-lg text-white/80 max-w-3xl mx-auto">Arsenal completo para tu preparación. No dejamos nada al azar.</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
-                    <Flame className="h-12 w-12 text-primary mb-4"/>
-                    <h3 className="text-xl md:text-2xl font-bold mb-2">Planes Nutricionales Tácticos</h3>
-                    <p className="text-muted-foreground">Dietas personalizadas basadas en tu biometría, disciplina y objetivos. Máxima eficiencia energética y recuperación.</p>
-                  </Card>
-                  <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
-                    <HeartPulse className="h-12 w-12 text-primary mb-4"/>
-                    <h3 className="text-xl md:text-2xl font-bold mb-2">Seguimiento Biométrico Avanzado</h3>
-                    <p className="text-muted-foreground">Análisis de composición corporal, metabolismo y marcadores de rendimiento para ajustes precisos y en tiempo real.</p>
-                  </Card>
-                   <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
-                    <BrainCircuit className="h-12 w-12 text-primary mb-4"/>
-                    <h3 className="text-xl md:text-2xl font-bold mb-2">Consultoría de Rendimiento</h3>
-                    <p className="text-muted-foreground">Asesoramiento uno a uno para estrategias de corte de peso, picos de rendimiento y suplementación estratégica.</p>
-                  </Card>
-              </div>
-          </div>
-        </section>
-
-        {/* Section: Servicios */}
-        <section
-          id="servicios"
-          ref={(el) => (sectionRefs.current[3] = el)}
-          className="min-h-screen flex items-center py-20"
-        >
-           <div className="container mx-auto px-4">
+           <div className="container mx-auto">
                 <div className="text-center mb-12">
-                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Nuestros <span className="text-primary">Servicios</span></h2>
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Nuestro <span className="text-primary">Rendimiento</span></h2>
                    <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Nuestro espacio multi disciplinar y complementario.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -316,6 +278,44 @@ export default function WelcomePage() {
                   </Card>
               </div>
            </div>
+        </section>
+
+        {/* Section: Servicios */}
+        <section
+          id="servicios"
+          ref={(el) => (sectionRefs.current[3] = el)}
+          className="min-h-screen flex items-center py-20 relative"
+        >
+          <Image
+            src="/prox.png"
+            alt="Nuestros Servicios"
+            fill
+            className="object-cover z-0"
+          />
+          <div className="absolute inset-0 bg-black/70" />
+          <div className="container mx-auto px-4 relative z-10">
+              <div className="text-center mb-12">
+                  <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter text-white">Nuestros <span className="text-primary">Servicios</span></h2>
+                  <p className="mt-4 text-lg text-white/80 max-w-3xl mx-auto">Arsenal completo para tu preparación. No dejamos nada al azar.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
+                    <Flame className="h-12 w-12 text-primary mb-4"/>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">Planes Nutricionales Tácticos</h3>
+                    <p className="text-muted-foreground">Dietas personalizadas basadas en tu biometría, disciplina y objetivos. Máxima eficiencia energética y recuperación.</p>
+                  </Card>
+                  <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
+                    <HeartPulse className="h-12 w-12 text-primary mb-4"/>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">Seguimiento Biométrico Avanzado</h3>
+                    <p className="text-muted-foreground">Análisis de composición corporal, metabolismo y marcadores de rendimiento para ajustes precisos y en tiempo real.</p>
+                  </Card>
+                   <Card className="p-8 text-center flex flex-col items-center bg-card/70 backdrop-blur-sm border-white/10">
+                    <BrainCircuit className="h-12 w-12 text-primary mb-4"/>
+                    <h3 className="text-xl md:text-2xl font-bold mb-2">Consultoría de Rendimiento</h3>
+                    <p className="text-muted-foreground">Asesoramiento uno a uno para estrategias de corte de peso, picos de rendimiento y suplementación estratégica.</p>
+                  </Card>
+              </div>
+          </div>
         </section>
 
         {/* Section: Eventos */}
@@ -381,9 +381,9 @@ export default function WelcomePage() {
                 Equipamiento de élite para el guerrero moderno. Testeado en combate, construido para durar.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
               <Card className="group overflow-hidden">
-                <Image src="/kick.png" data-ai-hint="jiu-jitsu gi" alt="Gi de Jiu-Jitsu" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <Image src="/kick.png" data-ai-hint="jiu-jitsu gi" alt="Gi de Competición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                 <CardContent className="p-4">
                   <h3 className="text-xl font-bold">Gi de Competición</h3>
                   <p className="text-muted-foreground text-sm mt-1">Ligero, resistente y diseñado para la victoria.</p>
@@ -396,22 +396,6 @@ export default function WelcomePage() {
                   <h3 className="text-xl font-bold">Guantes de Sparring 16oz</h3>
                   <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para asaltos intensos.</p>
                   <p className="text-primary font-bold text-lg mt-2">$1,200 MXN</p>
-                </CardContent>
-              </Card>
-              <Card className="group overflow-hidden">
-                <Image src="/uady.png" data-ai-hint="creatine supplement" alt="Suplemento de Creatina" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Creatina Monohidratada</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Potencia y recuperación. El combustible del campeón.</p>
-                  <p className="text-primary font-bold text-lg mt-2">$800 MXN</p>
-                </CardContent>
-              </Card>
-              <Card className="group overflow-hidden">
-                <Image src="/Premier.png" data-ai-hint="rashguard" alt="Rashguard Táctico" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Rashguard Táctico</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Compresión óptima y control de la humedad.</p>
-                  <p className="text-primary font-bold text-lg mt-2">$950 MXN</p>
                 </CardContent>
               </Card>
             </div>
