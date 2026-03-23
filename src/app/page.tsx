@@ -95,9 +95,9 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="https://picsum.photos/seed/fighter/1920/1080"
-            alt="Luchador de MMA en un octágono"
-            data-ai-hint="mma fighter"
+            src="https://images.unsplash.com/photo-1618218152289-e850b11b71d6"
+            alt="Luchador preparándose para el combate"
+            data-ai-hint="fighter training"
             fill
             className="object-cover z-0"
             priority
