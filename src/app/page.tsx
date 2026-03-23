@@ -15,6 +15,7 @@ const sections = [
   { id: 'rendimiento', name: 'Rendimiento' },
   { id: 'servicios', name: 'Servicios' },
   { id: 'eventos', name: 'Eventos' },
+  { id: 'productos', name: 'Productos' },
   { id: 'contacto', name: 'Contacto' },
 ];
 
@@ -306,7 +307,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/proximamente.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Proximamente</h3>
                           <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
@@ -332,35 +333,85 @@ export default function WelcomePage() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <Card className="group overflow-hidden">
-                <Image src="/prox.png" data-ai-hint="seminar" alt="Seminario de Jiu-Jitsu" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <Image src="/uady.png" data-ai-hint="seminar" alt="Seminario de Jiu-Jitsu" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                 <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Seminario de Guardia de la Riva</h3>
-                  <p className="text-muted-foreground text-sm mt-1">con el campeón mundial invitado.</p>
-                  <p className="text-primary font-bold text-lg mt-2">JUNIO 2024</p>
+                  <h3 className="text-xl font-bold">GARRA JAGUAR NO-GI</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Torneo No-Gi, AUDY, reglamento IBJJF. *Costo:$600*.</p>
+                  <p className="text-primary font-bold text-lg mt-2">18 ABRIL</p>
                 </CardContent>
               </Card>
               <Card className="group overflow-hidden">
-                <Image src="/prox.png" data-ai-hint="competition" alt="Torneo de Kickboxing" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <Image src="/Premier.png" data-ai-hint="competition" alt="Torneo de Kickboxing" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                 <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Torneo Interno "Furia Albatros"</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Competencia de Kickboxing y Sparring.</p>
-                  <p className="text-primary font-bold text-lg mt-2">JULIO 2024</p>
+                  <h3 className="text-xl font-bold">PREMIER GRAPPLING NO-GI</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Torneo No-Gi, Premier, reglamento ADCC. *Costo:$800*.</p>
+                  <p className="text-primary font-bold text-lg mt-2">26 ABRIL</p>
                 </CardContent>
               </Card>
               <Card className="group overflow-hidden">
-                <Image src="/prox.png" data-ai-hint="nutrition workshop" alt="Taller de Nutrición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <Image src="/estatal.png" data-ai-hint="nutrition workshop" alt="Taller de Nutrición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                 <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Taller de Nutrición de Combate</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Aprende a comer como un campeón.</p>
-                  <p className="text-primary font-bold text-lg mt-2">AGOSTO 2024</p>
+                  <h3 className="text-xl font-bold">CAMPEONATO ESTATAL DE JIU JITSU</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Torneo Gi y No-Gi, FMJJ, reglamento IBJJF. *Costo:$1400*.</p>
+                  <p className="text-primary font-bold text-lg mt-2">02 JULIO</p>
                 </CardContent>
               </Card>
               <Card className="group overflow-hidden">
                 <Image src="/prox.png" data-ai-hint="training camp" alt="Campamento de Verano" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                 <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Campamento de Verano Albatros</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Una semana intensiva de entrenamiento.</p>
-                  <p className="text-primary font-bold text-lg mt-2">AGOSTO 2024</p>
+                  <h3 className="text-xl font-bold">PROXIMAMENTE</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Proximos Torneos en camino.</p>
+                  <p className="text-primary font-bold text-lg mt-2">PROXIMAMENTE...</p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+
+        {/* Section: Productos */}
+        <section
+          id="productos"
+          ref={(el) => (sectionRefs.current[5] = el)}
+          className="min-h-screen flex items-center py-20 bg-card"
+        >
+          <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Nuestros <span className="text-primary">Productos</span></h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">
+                Equipamiento de élite para el guerrero moderno. Testeado en combate, construido para durar.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              <Card className="group overflow-hidden">
+                <Image src="/kick.png" data-ai-hint="jiu-jitsu gi" alt="Gi de Jiu-Jitsu" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Gi de Competición</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Ligero, resistente y diseñado para la victoria.</p>
+                  <p className="text-primary font-bold text-lg mt-2">$2,500 MXN</p>
+                </CardContent>
+              </Card>
+              <Card className="group overflow-hidden">
+                <Image src="/combo.png" data-ai-hint="sparring gloves" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Guantes de Sparring 16oz</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para asaltos intensos.</p>
+                  <p className="text-primary font-bold text-lg mt-2">$1,200 MXN</p>
+                </CardContent>
+              </Card>
+              <Card className="group overflow-hidden">
+                <Image src="/uady.png" data-ai-hint="creatine supplement" alt="Suplemento de Creatina" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Creatina Monohidratada</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Potencia y recuperación. El combustible del campeón.</p>
+                  <p className="text-primary font-bold text-lg mt-2">$800 MXN</p>
+                </CardContent>
+              </Card>
+              <Card className="group overflow-hidden">
+                <Image src="/Premier.png" data-ai-hint="rashguard" alt="Rashguard Táctico" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Rashguard Táctico</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Compresión óptima y control de la humedad.</p>
+                  <p className="text-primary font-bold text-lg mt-2">$950 MXN</p>
                 </CardContent>
               </Card>
             </div>
@@ -370,7 +421,7 @@ export default function WelcomePage() {
         {/* Section: Contacto */}
         <footer
           id="contacto"
-          ref={(el) => (sectionRefs.current[5] = el)}
+          ref={(el) => (sectionRefs.current[6] = el)}
           className="bg-card py-20"
         >
           <div className="container mx-auto text-center px-4">
