@@ -181,7 +181,7 @@ export default function WelcomePage() {
                   <h2 className="text-4xl md:text-5xl font-black tracking-tighter">Nuestros <span className="text-primary">Servicios</span></h2>
                    <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Nuestro espacio multi disciplinar y complementario.</p>
               </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="group overflow-hidden">
                       <Image src="https://picsum.photos/seed/protein/400/300" data-ai-hint="protein powder" alt="Proteína" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
@@ -196,22 +196,6 @@ export default function WelcomePage() {
                           <h3 className="text-xl font-bold">Creatina Monohidratada</h3>
                           <p className="text-muted-foreground text-sm mt-1">Potencia y fuerza explosiva garantizadas.</p>
                           <p className="text-primary font-bold text-lg mt-2">$800 MXN</p>
-                      </CardContent>
-                  </Card>
-                   <Card className="group overflow-hidden">
-                      <Image src="https://picsum.photos/seed/gloves/400/300" data-ai-hint="boxing gloves" alt="Guantes" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                      <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Guantes de Sparring</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para el combate diario.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$2,500 MXN</p>
-                      </CardContent>
-                  </Card>
-                  <Card className="group overflow-hidden">
-                      <Image src="https://picsum.photos/seed/rashguard/400/300" data-ai-hint="rashguard apparel" alt="Rashguard" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                      <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Rashguard Táctico</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Compresión y movilidad para grappling.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$950 MXN</p>
                       </CardContent>
                   </Card>
               </div>
