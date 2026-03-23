@@ -191,7 +191,7 @@ export default function WelcomePage() {
                       </CardContent>
                   </Card>
                    <Card className="group overflow-hidden">
-                      <Image src="/Kick.png" data-ai-hint="creatine supplement" alt="Creatina" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/kick.png" data-ai-hint="creatine supplement" alt="Creatina" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Creatina Monohidratada</h3>
                           <p className="text-muted-foreground text-sm mt-1">Potencia y fuerza explosiva garantizadas.</p>
