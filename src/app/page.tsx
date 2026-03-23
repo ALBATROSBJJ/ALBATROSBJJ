@@ -347,6 +347,22 @@ export default function WelcomePage() {
                   <p className="text-primary font-bold text-lg mt-2">JULIO 2024</p>
                 </CardContent>
               </Card>
+              <Card className="group overflow-hidden">
+                <Image src="/prox.png" data-ai-hint="nutrition workshop" alt="Taller de Nutrición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Taller de Nutrición de Combate</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Aprende a comer como un campeón.</p>
+                  <p className="text-primary font-bold text-lg mt-2">AGOSTO 2024</p>
+                </CardContent>
+              </Card>
+              <Card className="group overflow-hidden">
+                <Image src="/prox.png" data-ai-hint="training camp" alt="Campamento de Verano" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                <CardContent className="p-4">
+                  <h3 className="text-xl font-bold">Campamento de Verano Albatros</h3>
+                  <p className="text-muted-foreground text-sm mt-1">Una semana intensiva de entrenamiento.</p>
+                  <p className="text-primary font-bold text-lg mt-2">AGOSTO 2024</p>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </section>
