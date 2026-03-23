@@ -96,7 +96,7 @@ export default function WelcomePage() {
           className="h-screen flex items-center justify-center relative overflow-hidden"
         >
           <Image
-            src="/bjj.png"
+            src="/prox.png"
             alt="Banner de Albatros"
             fill
             className="object-cover z-0"
