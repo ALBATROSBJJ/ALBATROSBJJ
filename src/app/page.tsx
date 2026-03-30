@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mail, MapPin, Phone, ChevronsRight, Flame, HeartPulse, BrainCircuit, Menu, Copy } from 'lucide-react';
+import { Mail, MapPin, Phone, ChevronsRight, Flame, HeartPulse, BrainCircuit, Menu, Copy, Maximize, AirVent, ParkingCircle, ShowerHead, Refrigerator, Wifi } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
@@ -515,14 +515,64 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 px-4"
         >
           <div className="container mx-auto">
-            <div className="space-y-6 text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Nuestra Misión: <span className="text-primary">Forjar Campeones</span></h2>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                En Albatros, no creemos en las casualidades. Creemos en la preparación implacable, la disciplina y la ciencia aplicada al rendimiento. Somos un equipo de nutricionistas, entrenadores y ex-atletas dedicados a una sola cosa: llevar tu potencial al límite.
-              </p>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                Nuestra filosofía es simple: cada gramo de comida es una herramienta, cada entrenamiento es una misión y cada día es una oportunidad para ser más letal. Fusionamos la última tecnología en análisis biométrico con la experiencia real del combate para crear sistemas nutricionales que construyen máquinas de pelear.
-              </p>
+            <div className="flex flex-col items-center gap-16 md:gap-24">
+              <div className="space-y-6 text-center">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Nuestra Misión: <span className="text-primary">Forjar Campeones</span></h2>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  En Albatros, no creemos en las casualidades. Creemos en la preparación implacable, la disciplina y la ciencia aplicada al rendimiento. Somos un equipo de nutricionistas, entrenadores y ex-atletas dedicados a una sola cosa: llevar tu potencial al límite.
+                </p>
+                <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+                  Nuestra filosofía es simple: cada gramo de comida es una herramienta, cada entrenamiento es una misión y cada día es una oportunidad para ser más letal. Fusionamos la última tecnología en análisis biométrico con la experiencia real del combate para crear sistemas nutricionales que construyen máquinas de pelear.
+                </p>
+              </div>
+
+              <div className="w-full max-w-6xl">
+                <Card className="overflow-hidden bg-card/50">
+                  <div className="grid grid-cols-1 md:grid-cols-2">
+                    <div className="relative h-80 md:h-auto">
+                      <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.039755913217!2d-89.7027809259273!3d20.99088828859941!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5670094e503377%3A0x2df839a9134a6627!2sAlbatros%20BJJ%20%26%20M.M.A!5e0!3m2!1sen!2smx!4v1717188339591!5m2!1sen!2smx"
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        allowFullScreen={false}
+                        loading="lazy"
+                        referrerPolicy="no-referrer-when-downgrade"
+                        className="absolute inset-0"
+                      ></iframe>
+                    </div>
+                    <div className="p-6 md:p-8">
+                      <h3 className="text-2xl font-bold mb-6">Instalaciones de Élite</h3>
+                      <ul className="space-y-5 text-lg">
+                        <li className="flex items-center gap-4">
+                          <Maximize className="h-7 w-7 text-primary flex-shrink-0" />
+                          <span>Más de 100 m² de tatami</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                          <AirVent className="h-7 w-7 text-primary flex-shrink-0" />
+                          <span>Aire Acondicionado Multizona</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                          <ParkingCircle className="h-7 w-7 text-primary flex-shrink-0" />
+                          <span>Estacionamiento</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                          <ShowerHead className="h-7 w-7 text-primary flex-shrink-0" />
+                          <span>Sanitarios y Regaderas</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                          <Refrigerator className="h-7 w-7 text-primary flex-shrink-0" />
+                          <span>Frigobar</span>
+                        </li>
+                        <li className="flex items-center gap-4">
+                          <Wifi className="h-7 w-7 text-primary flex-shrink-0" />
+                          <span>WiFi de alta velocidad</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
@@ -916,4 +966,5 @@ export default function WelcomePage() {
     </div>
   );
 }
+
 
