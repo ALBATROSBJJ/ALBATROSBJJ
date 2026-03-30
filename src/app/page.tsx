@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -10,10 +11,13 @@ import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
+import { initializeApp, getApps, getApp } from 'firebase/app';
+import { getFirestore, addDoc, collection, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { firebaseConfig } from '@/firebase/config';
 
 const sections = [
   { id: 'inicio', name: 'Inicio' },
@@ -44,7 +48,18 @@ const products = [
   },
 ];
 
-const events = [
+type Event = {
+  id: string;
+  name: string;
+  card_description: string;
+  description: string;
+  info: string;
+  price: string;
+  date: string;
+  image: string;
+};
+
+const events: Event[] = [
     {
       id: 'garra-jaguar',
       name: 'GARRA JAGUAR NO-GI',
@@ -95,7 +110,12 @@ export default function WelcomePage() {
   const startY = useRef(0);
   const initialScrollTop = useRef(0);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [dialogView, setDialogView] = useState('details'); // 'details', 'options', 'form', 'code'
+  
+  const [dialogView, setDialogView] = useState<'details' | 'options' | 'form' | 'code' | 'payment' | 'confirmation'>('details');
+  const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+  const [currentRegistrationId, setCurrentRegistrationId] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
 
   // Intersection Observer to set active section
   useEffect(() => {
@@ -146,6 +166,57 @@ export default function WelcomePage() {
     });
     scrollToSection(closestSectionId, 'smooth');
   }, [scrollToSection]);
+  
+  const handleFinalizeRegistration = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!currentEvent) return;
+
+    setIsSubmitting(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    
+    const registrationData = {
+        eventId: currentEvent.id,
+        eventName: currentEvent.name,
+        fullName: formData.get('fullName') as string,
+        age: Number(formData.get('age')),
+        category: formData.get('category') as string,
+        birthDate: formData.get('birthDate') as string,
+        curp: formData.get('curp') as string || '',
+        phone: formData.get('phone') as string || '',
+        email: formData.get('email') as string || '',
+        status: 'pending_payment',
+        createdAt: serverTimestamp(),
+        paymentReference: '',
+    };
+    
+    if (!registrationData.fullName || !registrationData.age || !registrationData.category || !registrationData.birthDate) {
+        alert("Por favor, completa todos los campos obligatorios.");
+        setIsSubmitting(false);
+        return;
+    }
+
+    try {
+        let app;
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApp();
+        }
+        const db = getFirestore(app);
+
+        const docRef = await addDoc(collection(db, "eventRegistrations"), registrationData);
+        await updateDoc(docRef, { paymentReference: docRef.id });
+
+        setCurrentRegistrationId(docRef.id);
+        setDialogView('payment');
+    } catch (error) {
+        console.error("Error saving to Firestore:", error);
+        alert("Hubo un error al guardar tu registro. Por favor, inténtalo de nuevo.");
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
 
   const handleMouseDown = (e: React.MouseEvent) => {
     isDragging.current = true;
@@ -445,7 +516,7 @@ export default function WelcomePage() {
               {events.map((event) => (
                 <Dialog key={event.id} onOpenChange={(isOpen) => !isOpen && setDialogView('details')}>
                   <DialogTrigger asChild>
-                    <Card className="group overflow-hidden cursor-pointer">
+                    <Card className="group overflow-hidden cursor-pointer" onClick={() => setCurrentEvent(event)}>
                       <Image src={event.image} data-ai-hint="competition" alt={event.name} width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                         <h3 className="text-xl font-bold">{event.name}</h3>
@@ -490,6 +561,9 @@ export default function WelcomePage() {
                           <Button className="w-full" size="lg" onClick={() => setDialogView('form')}>DATOS PERSONALES</Button>
                           <Button className="w-full" size="lg" variant="outline" onClick={() => setDialogView('code')}>CODIGO</Button>
                         </div>
+                        <DialogFooter>
+                            <Button variant="ghost" onClick={() => setDialogView('details')}>Volver</Button>
+                        </DialogFooter>
                       </>
                     )}
                     {dialogView === 'form' && (
@@ -498,24 +572,24 @@ export default function WelcomePage() {
                                 <DialogTitle>Registro para {event.name}</DialogTitle>
                                 <DialogDescription>Completa tus datos personales para la inscripción.</DialogDescription>
                             </DialogHeader>
-                            <form className="py-4 space-y-4">
+                            <form onSubmit={handleFinalizeRegistration} className="py-4 space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="fullName">Nombre Completo</Label>
-                                    <Input id="fullName" placeholder="Nombre y Apellido" required />
+                                    <Input id="fullName" name="fullName" placeholder="Nombre y Apellido" required />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="age">Edad</Label>
-                                        <Input id="age" type="number" placeholder="25" required />
+                                        <Input id="age" name="age" type="number" placeholder="25" required />
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="category">Categoría</Label>
-                                        <Input id="category" placeholder="Ej. Peso Pluma" required />
+                                        <Input id="category" name="category" placeholder="Ej. Peso Pluma" required />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="birthDate">Fecha de Nacimiento</Label>
-                                    <Input id="birthDate" type="date" required />
+                                    <Input id="birthDate" name="birthDate" type="date" required />
                                 </div>
 
                                 <Separator />
@@ -524,23 +598,23 @@ export default function WelcomePage() {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="curp">CURP</Label>
-                                    <Input id="curp" placeholder="Clave Única de Registro de Población" />
+                                    <Input id="curp" name="curp" placeholder="Clave Única de Registro de Población" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                   <div className="space-y-2">
                                       <Label htmlFor="phone">Teléfono Celular</Label>
-                                      <Input id="phone" type="tel" placeholder="999-999-9999" />
+                                      <Input id="phone" name="phone" type="tel" placeholder="999-999-9999" />
                                   </div>
                                   <div className="space-y-2">
                                       <Label htmlFor="email">Correo Electrónico</Label>
-                                      <Input id="email" type="email" placeholder="atleta@email.com" />
+                                      <Input id="email" name="email" type="email" placeholder="atleta@email.com" />
                                   </div>
                                 </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setDialogView('options')} type="button">Volver</Button>
+                                    <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Registrando...' : 'Finalizar Inscripción'}</Button>
+                                </DialogFooter>
                             </form>
-                            <DialogFooter>
-                                <Button variant="outline" onClick={() => setDialogView('options')}>Volver</Button>
-                                <Button type="submit">Finalizar Inscripción</Button>
-                            </DialogFooter>
                         </>
                     )}
                     {dialogView === 'code' && (
@@ -554,10 +628,70 @@ export default function WelcomePage() {
                                     <Label htmlFor="eventCode">Código de Profesor</Label>
                                     <Input id="eventCode" placeholder="Ingresa tu código" required />
                                 </div>
+                                <DialogFooter>
+                                    <Button variant="outline" onClick={() => setDialogView('options')} type="button">Volver</Button>
+                                    <Button type="submit">Confirmar Código</Button>
+                                </DialogFooter>
                             </form>
+                        </>
+                    )}
+                    {dialogView === 'payment' && (
+                      <>
+                        <DialogHeader>
+                            <DialogTitle>Realizar Pago</DialogTitle>
+                            <DialogDescription>Completa tu inscripción realizando el pago para el evento {currentEvent?.name}.</DialogDescription>
+                        </DialogHeader>
+                        <div className="py-4 space-y-6">
+                            <div className="p-4 rounded-md border bg-secondary/50">
+                                <p className="text-sm text-muted-foreground">Tu número de referencia de pago es:</p>
+                                <p className="text-2xl font-bold font-mono text-center py-2">{currentRegistrationId}</p>
+                                <p className="text-xs text-muted-foreground text-center">Incluye esta referencia en el concepto de tu transferencia.</p>
+                            </div>
+                            <div className="space-y-4">
+                                <h4 className="font-semibold text-foreground">Opción 1: Transferencia Bancaria</h4>
+                                <ul className="text-sm text-muted-foreground list-none space-y-1 p-4 border rounded-md">
+                                    <li><span className="font-semibold text-foreground">CLABE:</span> 722969020451950629</li>
+                                    <li><span className="font-semibold text-foreground">Beneficiario:</span> Jorge Vega Cortes</li>
+                                    <li><span className="font-semibold text-foreground">Institución:</span> Mercado Pago</li>
+                                </ul>
+                            </div>
+                             <div className="space-y-2">
+                                <h4 className="font-semibold text-foreground">Opción 2: Tarjeta de Crédito/Débito</h4>
+                                <Button asChild className="w-full" size="lg">
+                                    <a href="https://mpago.la/2GBPeGU" target="_blank" rel="noopener noreferrer">
+                                        Pagar con Mercado Pago
+                                    </a>
+                                </Button>
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button onClick={() => setDialogView('confirmation')}>He realizado mi pago</Button>
+                        </DialogFooter>
+                      </>
+                    )}
+                    {dialogView === 'confirmation' && (
+                        <>
+                            <DialogHeader>
+                                <DialogTitle>¡Inscripción Recibida!</DialogTitle>
+                            </DialogHeader>
+                            <div className="py-4 space-y-4 text-center">
+                                <p className="text-muted-foreground">Gracias por registrarte en <span className="font-bold">{currentEvent?.name}</span>. Tu pago será verificado por nuestro equipo en breve.</p>
+                                <p className="text-sm text-muted-foreground">Tu referencia de pago: <span className="font-bold font-mono">{currentRegistrationId}</span></p>
+
+                                <Button asChild>
+                                    <a 
+                                        href={`https://wa.me/?text=Hola, he completado mi inscripción al evento ${currentEvent?.name}. Mi referencia de pago es ${currentRegistrationId}. Adjunto mi comprobante.`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Notificar Pago por WhatsApp
+                                    </a>
+                                </Button>
+                            </div>
                             <DialogFooter>
-                                <Button variant="outline" onClick={() => setDialogView('options')}>Volver</Button>
-                                <Button type="submit">Confirmar Código</Button>
+                                 <DialogClose asChild>
+                                    <Button variant="outline" onClick={() => setDialogView('details')}>Cerrar</Button>
+                                </DialogClose>
                             </DialogFooter>
                         </>
                     )}
