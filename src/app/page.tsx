@@ -507,7 +507,7 @@ export default function WelcomePage() {
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-6 w-6 text-primary" />
                   <span className="sr-only">Abrir menú</span>
                 </Button>
               </SheetTrigger>
@@ -1095,6 +1095,7 @@ export default function WelcomePage() {
 
 
     
+
 
 
 
