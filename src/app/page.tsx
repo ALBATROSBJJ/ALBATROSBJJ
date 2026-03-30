@@ -558,7 +558,7 @@ export default function WelcomePage() {
                         </li>
                         <li className="flex items-center gap-4">
                           <ShowerHead className="h-7 w-7 text-primary flex-shrink-0" />
-                          <span>Sanitarios y Regaderas</span>
+                          <span>Sanitarios</span>
                         </li>
                         <li className="flex items-center gap-4">
                           <Refrigerator className="h-7 w-7 text-primary flex-shrink-0" />
@@ -966,5 +966,6 @@ export default function WelcomePage() {
     </div>
   );
 }
+
 
 
