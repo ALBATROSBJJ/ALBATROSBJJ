@@ -10,7 +10,7 @@ import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
@@ -41,6 +41,49 @@ const products = [
     image: '/camisakick.png',
     sizes: ['S', 'M', 'L', 'XL'],
   },
+];
+
+const events = [
+    {
+      id: 'garra-jaguar',
+      name: 'GARRA JAGUAR NO-GI',
+      card_description: 'Torneo No-Gi, AUDY, reglamento IBJJF.',
+      description: 'Competición de Jiu-Jitsu sin kimono bajo el reglamento oficial de la IBJJF. Un evento para medir tu nivel y ganar experiencia.',
+      info: 'El pesaje se realizará el día del evento una hora antes de la primera pelea de tu categoría. Es obligatorio presentar identificación oficial.',
+      price: '$600 MXN',
+      date: '18 ABRIL',
+      image: '/uady.png',
+    },
+    {
+      id: 'premier-grappling',
+      name: 'PREMIER GRAPPLING NO-GI',
+      card_description: 'Torneo No-Gi, Premier, reglamento ADCC.',
+      description: 'Evento de grappling con las reglas del prestigioso torneo ADCC. Enfocado en la sumisión y el combate de alto ritmo.',
+      info: 'Abierto a todas las cintas y niveles de experiencia. Premios en efectivo para los ganadores de las divisiones absolutas.',
+      price: '$800 MXN',
+      date: '26 ABRIL',
+      image: '/Premier.png',
+    },
+    {
+      id: 'estatal-jiujitsu',
+      name: 'CAMPEONATO ESTATAL DE JIU JITSU',
+      card_description: 'Torneo Gi y No-Gi, FMJJ, reglamento IBJJF.',
+      description: 'El evento más importante a nivel estatal. Compite en las modalidades con y sin kimono para coronarte como campeón de Yucatán.',
+      info: 'Este evento es clasificatorio para el campeonato nacional. Válido para el ranking de la Federación Mexicana de Jiu-Jitsu (FMJJ).',
+      price: '$1400 MXN',
+      date: '02 JULIO',
+      image: '/estatal.png',
+    },
+    {
+      id: 'proximamente-evento',
+      name: 'PROXIMAMENTE',
+      card_description: 'Proximos Torneos en camino.',
+      description: 'Estamos trabajando en la organización de más eventos, seminarios con atletas de renombre y campamentos de entrenamiento.',
+      info: 'Mantente atento a nuestras redes sociales y a esta sección para ser el primero en enterarte.',
+      price: 'Por confirmar',
+      date: 'PROXIMAMENTE',
+      image: '/prox.png',
+    },
 ];
 
 export default function WelcomePage() {
@@ -397,38 +440,43 @@ export default function WelcomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <Card className="group overflow-hidden">
-                <Image src="/uady.png" data-ai-hint="seminar" alt="Seminario de Jiu-Jitsu" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">GARRA JAGUAR NO-GI</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Torneo No-Gi, AUDY, reglamento IBJJF. *Costo:$600*.</p>
-                  <p className="text-primary font-bold text-lg mt-2">18 ABRIL</p>
-                </CardContent>
-              </Card>
-              <Card className="group overflow-hidden">
-                <Image src="/Premier.png" data-ai-hint="competition" alt="Torneo de Kickboxing" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">PREMIER GRAPPLING NO-GI</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Torneo No-Gi, Premier, reglamento ADCC. *Costo:$800*.</p>
-                  <p className="text-primary font-bold text-lg mt-2">26 ABRIL</p>
-                </CardContent>
-              </Card>
-              <Card className="group overflow-hidden">
-                <Image src="/estatal.png" data-ai-hint="nutrition workshop" alt="Taller de Nutrición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">CAMPEONATO ESTATAL DE JIU JITSU</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Torneo Gi y No-Gi, FMJJ, reglamento IBJJF. *Costo:$1400*.</p>
-                  <p className="text-primary font-bold text-lg mt-2">02 JULIO</p>
-                </CardContent>
-              </Card>
-              <Card className="group overflow-hidden">
-                <Image src="/prox.png" data-ai-hint="training camp" alt="Campamento de Verano" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">PROXIMAMENTE</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Proximos Torneos en camino.</p>
-                  <p className="text-primary font-bold text-lg mt-2">PROXIMAMENTE...</p>
-                </CardContent>
-              </Card>
+              {events.map((event) => (
+                <Dialog key={event.id}>
+                  <DialogTrigger asChild>
+                    <Card className="group overflow-hidden cursor-pointer">
+                      <Image src={event.image} data-ai-hint="competition" alt={event.name} width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <CardContent className="p-4">
+                        <h3 className="text-xl font-bold">{event.name}</h3>
+                        <p className="text-muted-foreground text-sm mt-1">{event.card_description}</p>
+                        <p className="text-primary font-bold text-lg mt-2">{event.date}</p>
+                      </CardContent>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>{event.name}</DialogTitle>
+                      <DialogDescription>{event.date}</DialogDescription>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                      <Image src={event.image} alt={event.name} width={400} height={300} className="w-full rounded-md object-cover" />
+                      <div className="space-y-3">
+                         <div>
+                            <h4 className="font-semibold text-foreground">Descripción</h4>
+                            <p className="text-sm text-muted-foreground">{event.description}</p>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold text-foreground">Información Adicional</h4>
+                            <p className="text-sm text-muted-foreground">{event.info}</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center pt-2">
+                        <p className="text-3xl font-black text-primary tracking-tighter">{event.price}</p>
+                        <Button size="lg" disabled={event.id === 'proximamente-evento'}>INSCRIBIRSE</Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ))}
             </div>
           </div>
         </section>
