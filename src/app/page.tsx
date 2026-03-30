@@ -95,7 +95,7 @@ export default function WelcomePage() {
   const startY = useRef(0);
   const initialScrollTop = useRef(0);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [dialogView, setDialogView] = useState('details'); // 'details', 'options', 'form'
+  const [dialogView, setDialogView] = useState('details'); // 'details', 'options', 'form', 'code'
 
   // Intersection Observer to set active section
   useEffect(() => {
@@ -488,7 +488,7 @@ export default function WelcomePage() {
                         </DialogHeader>
                         <div className="py-4 space-y-4">
                           <Button className="w-full" size="lg" onClick={() => setDialogView('form')}>DATOS PERSONALES</Button>
-                          <Button className="w-full" size="lg" variant="outline">CODIGO</Button>
+                          <Button className="w-full" size="lg" variant="outline" onClick={() => setDialogView('code')}>CODIGO</Button>
                         </div>
                       </>
                     )}
@@ -540,6 +540,24 @@ export default function WelcomePage() {
                             <DialogFooter>
                                 <Button variant="outline" onClick={() => setDialogView('options')}>Volver</Button>
                                 <Button type="submit">Finalizar Inscripción</Button>
+                            </DialogFooter>
+                        </>
+                    )}
+                    {dialogView === 'code' && (
+                        <>
+                            <DialogHeader>
+                                <DialogTitle>Inscripción con Código</DialogTitle>
+                                <DialogDescription>Ingresa el código que te proporcionó tu profesor para registrarte en {event.name}.</DialogDescription>
+                            </DialogHeader>
+                            <form className="py-4 space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="eventCode">Código de Profesor</Label>
+                                    <Input id="eventCode" placeholder="Ingresa tu código" required />
+                                </div>
+                            </form>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setDialogView('options')}>Volver</Button>
+                                <Button type="submit">Confirmar Código</Button>
                             </DialogFooter>
                         </>
                     )}
