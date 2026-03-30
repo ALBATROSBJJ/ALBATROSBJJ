@@ -128,18 +128,21 @@ service cloud.firestore {
     
     /**
      * Validates the data for a new public event registration.
+     * Ensures required fields are present, have correct types, and adhere to business logic.
      */
-    function isValidEventRegistration(data) {
-      let requiredKeys = ['eventId', 'eventName', 'fullName', 'age', 'category', 'birthDate', 'status', 'createdAt'];
-      let optionalKeys = ['curp', 'phone', 'email', 'paymentReference'];
+    function isValidEventRegistration(data, registrationId) {
+      let requiredKeys = ['id', 'eventId', 'eventName', 'fullName', 'age', 'category', 'birthDate', 'status', 'createdAt', 'paymentReference'];
+      let optionalKeys = ['curp', 'phone', 'email'];
       let allKeys = requiredKeys.concat(optionalKeys);
       
       return data.keys().hasAll(requiredKeys)
         && data.keys().hasOnly(allKeys)
+        && data.id == registrationId
+        && data.paymentReference == registrationId
         && data.fullName is string && data.fullName.size() > 1 && data.fullName.size() < 100
         && data.age is number && data.age > 5 && data.age < 100
         && data.category is string && data.category.size() > 1 && data.category.size() < 50
-        && data.status == 'pending_payment'; // Crucially, new registrations must be 'pending_payment'
+        && data.status == 'pending_payment';
     }
 
 
@@ -260,11 +263,11 @@ service cloud.firestore {
      *              writable to allow anyone to sign up for an event.
      * @path /registro_eventos/{registrationId}
      * @allow (create) Any client can create a new registration document, provided it passes validation.
-     * @deny (read, update, delete) Clients cannot read, update, or delete registrations to protect user privacy.
+     * @deny (read, update, delete) Clients cannot read, update, or delete registrations to protect user privacy and payment status.
      * @principle Allows public write with strict data validation. Prevents clients from changing payment status.
      */
     match /registro_eventos/{registrationId} {
-      allow create: if isValidEventRegistration(request.resource.data);
+      allow create: if isValidEventRegistration(request.resource.data, registrationId);
       allow read, update, delete: if false;
     }
   }

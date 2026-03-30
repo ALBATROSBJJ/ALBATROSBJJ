@@ -16,7 +16,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore, addDoc, collection, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { firebaseConfig } from '@/firebase/config';
 import { useToast } from '@/hooks/use-toast';
 
@@ -112,7 +112,7 @@ export default function WelcomePage() {
   const initialScrollTop = useRef(0);
   const [isInteracting, setIsInteracting] = useState(false);
   
-  const [dialogView, setDialogView] = useState<'details' | 'form' | 'payment'>('details');
+  const [dialogView, setDialogView] = useState<'details' | 'form' | 'payment' | 'code'>('details');
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [currentRegistrationId, setCurrentRegistrationId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -198,22 +198,12 @@ export default function WelcomePage() {
     const form = e.currentTarget;
     const formData = new FormData(form);
     
-    const registrationData = {
-        eventId: currentEvent.id,
-        eventName: currentEvent.name,
-        fullName: formData.get('fullName') as string,
-        age: Number(formData.get('age')),
-        category: formData.get('category') as string,
-        birthDate: formData.get('birthDate') as string,
-        curp: formData.get('curp') as string || '',
-        phone: formData.get('phone') as string || '',
-        email: formData.get('email') as string || '',
-        status: 'pending_payment',
-        createdAt: serverTimestamp(),
-        paymentReference: '',
-    };
-    
-    if (!registrationData.fullName || !registrationData.age || !registrationData.category || !registrationData.birthDate) {
+    const fullName = formData.get('fullName') as string;
+    const age = formData.get('age') as string;
+    const category = formData.get('category') as string;
+    const birthDate = formData.get('birthDate') as string;
+
+    if (!fullName || !age || !category || !birthDate) {
         toast({
             variant: "destructive",
             title: "Campos incompletos",
@@ -231,11 +221,30 @@ export default function WelcomePage() {
             app = getApp();
         }
         const db = getFirestore(app);
+        
+        // Generate a new document reference with an auto-generated ID
+        const newDocRef = doc(collection(db, "registro_eventos"));
 
-        const docRef = await addDoc(collection(db, "registro_eventos"), registrationData);
-        await updateDoc(docRef, { paymentReference: docRef.id });
+        const registrationData = {
+            id: newDocRef.id, // Store the document ID within the document
+            eventId: currentEvent.id,
+            eventName: currentEvent.name,
+            fullName: fullName,
+            age: Number(age),
+            category: category,
+            birthDate: birthDate,
+            curp: formData.get('curp') as string || '',
+            phone: formData.get('phone') as string || '',
+            email: formData.get('email') as string || '',
+            status: 'pending_payment' as const,
+            createdAt: serverTimestamp(),
+            paymentReference: newDocRef.id, // Use the document ID as the payment reference
+        };
 
-        setCurrentRegistrationId(docRef.id);
+        // Use setDoc with the new reference
+        await setDoc(newDocRef, registrationData);
+
+        setCurrentRegistrationId(newDocRef.id);
         setDialogView('payment'); // Switch to payment view
         toast({
             title: "¡Inscripción Recibida!",
@@ -246,7 +255,7 @@ export default function WelcomePage() {
         toast({
             variant: "destructive",
             title: "Error en el registro",
-            description: "Hubo un error al guardar tu inscripción. Por favor, inténtalo de nuevo.",
+            description: error instanceof Error ? error.message : "Hubo un error al guardar tu inscripción. Por favor, inténtalo de nuevo.",
         });
     } finally {
         setIsSubmitting(false);
@@ -593,9 +602,9 @@ export default function WelcomePage() {
                             <DialogHeader>
                               <DialogTitle>Registro para {currentEvent?.name}</DialogTitle>
                               <DialogDescription>
-                                Completa tus datos para la inscripción o{" "}
+                                Completa tus datos o{" "}
                                 <Button variant="link" className="p-0 h-auto text-primary" onClick={() => setDialogView('code')}>
-                                  inscribe con código de profesor
+                                  inscribe con código
                                 </Button>
                                 .
                               </DialogDescription>
