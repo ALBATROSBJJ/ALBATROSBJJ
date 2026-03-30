@@ -222,11 +222,10 @@ export default function WelcomePage() {
         }
         const db = getFirestore(app);
         
-        // Generate a new document reference with an auto-generated ID
         const newDocRef = doc(collection(db, "registro_eventos"));
 
         const registrationData = {
-            id: newDocRef.id, // Store the document ID within the document
+            id: newDocRef.id,
             eventId: currentEvent.id,
             eventName: currentEvent.name,
             fullName: fullName,
@@ -238,14 +237,13 @@ export default function WelcomePage() {
             email: formData.get('email') as string || '',
             status: 'pending_payment' as const,
             createdAt: serverTimestamp(),
-            paymentReference: newDocRef.id, // Use the document ID as the payment reference
+            paymentReference: newDocRef.id,
         };
 
-        // Use setDoc with the new reference
         await setDoc(newDocRef, registrationData);
 
         setCurrentRegistrationId(newDocRef.id);
-        setDialogView('payment'); // Switch to payment view
+        setDialogView('payment');
         toast({
             title: "¡Inscripción Recibida!",
             description: "Ahora puedes proceder con el pago.",
@@ -256,6 +254,77 @@ export default function WelcomePage() {
             variant: "destructive",
             title: "Error en el registro",
             description: error instanceof Error ? error.message : "Hubo un error al guardar tu inscripción. Por favor, inténtalo de nuevo.",
+        });
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
+
+  const handleCodeRegistration = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!currentEvent) return;
+
+    setIsSubmitting(true);
+    toast({
+        title: "Procesando inscripción...",
+        description: "Por favor espera un momento.",
+    });
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const eventCode = formData.get('eventCode') as string;
+
+    if (!eventCode) {
+        toast({
+            variant: "destructive",
+            title: "Código requerido",
+            description: "Por favor, ingresa el código de tu profesor.",
+        });
+        setIsSubmitting(false);
+        return;
+    }
+
+    try {
+        let app;
+        if (!getApps().length) {
+            app = initializeApp(firebaseConfig);
+        } else {
+            app = getApp();
+        }
+        const db = getFirestore(app);
+        
+        const newDocRef = doc(collection(db, "registro_eventos"));
+
+        const registrationData = {
+            id: newDocRef.id,
+            eventId: currentEvent.id,
+            eventName: currentEvent.name,
+            fullName: `Inscripción por Código`, // Placeholder
+            age: 0, // Placeholder
+            category: `Código: ${eventCode}`, // Store code here
+            birthDate: new Date().toISOString().split('T')[0], // Placeholder
+            curp: '',
+            phone: '',
+            email: '',
+            status: 'pending_payment' as const,
+            createdAt: serverTimestamp(),
+            paymentReference: newDocRef.id,
+        };
+
+        await setDoc(newDocRef, registrationData);
+
+        setCurrentRegistrationId(newDocRef.id);
+        setDialogView('payment');
+        toast({
+            title: "¡Código Aceptado!",
+            description: "Ahora puedes proceder con el pago para finalizar la inscripción.",
+        });
+    } catch (error) {
+        console.error("Error saving with code to Firestore:", error);
+        toast({
+            variant: "destructive",
+            title: "Error en el registro",
+            description: error instanceof Error ? error.message : "Hubo un error al procesar el código. Por favor, inténtalo de nuevo.",
         });
     } finally {
         setIsSubmitting(false);
@@ -721,14 +790,14 @@ export default function WelcomePage() {
                                 <DialogTitle>Inscripción con Código</DialogTitle>
                                 <DialogDescription>Ingresa el código que te proporcionó tu profesor para registrarte en {currentEvent?.name}.</DialogDescription>
                             </DialogHeader>
-                            <form className="py-4 space-y-4">
+                            <form onSubmit={handleCodeRegistration} className="py-4 space-y-4">
                                 <div className="space-y-2">
                                     <Label htmlFor="eventCode">Código de Profesor</Label>
-                                    <Input id="eventCode" placeholder="Ingresa tu código" required />
+                                    <Input id="eventCode" name="eventCode" placeholder="Ingresa tu código" required />
                                 </div>
                                 <DialogFooter>
                                     <Button variant="outline" onClick={() => setDialogView('form')} type="button">Volver</Button>
-                                    <Button type="submit">Confirmar Código</Button>
+                                    <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Confirmando...' : 'Confirmar Código'}</Button>
                                 </DialogFooter>
                             </form>
                         </>
@@ -847,3 +916,4 @@ export default function WelcomePage() {
     </div>
   );
 }
+
