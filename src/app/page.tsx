@@ -10,6 +10,9 @@ import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const sections = [
   { id: 'inicio', name: 'Inicio' },
@@ -19,6 +22,25 @@ const sections = [
   { id: 'eventos', name: 'Eventos' },
   { id: 'productos', name: 'Productos' },
   { id: 'contacto', name: 'Contacto' },
+];
+
+const products = [
+  {
+    id: 'rashguard',
+    name: 'Rashguard bjj Albatros Team.',
+    description: 'Ligero, resistente y diseñado para la victoria.',
+    price: '$300 MXN',
+    image: '/camisabjj.png',
+    sizes: ['S', 'M', 'L', 'XL'],
+  },
+  {
+    id: 'jersey',
+    name: 'Jersey Kick Boxing Albtatros Team.',
+    description: 'Protección y durabilidad para asaltos intensos.',
+    price: '$300 MXN',
+    image: '/camisakick.png',
+    sizes: ['S', 'M', 'L', 'XL'],
+  },
 ];
 
 export default function WelcomePage() {
@@ -326,7 +348,7 @@ export default function WelcomePage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <Card className="group overflow-hidden">
-                      <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <Image src="/prox.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
                           <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
                           <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
@@ -425,22 +447,47 @@ export default function WelcomePage() {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-2xl mx-auto">
-              <Card className="group overflow-hidden">
-                <Image src="/camisabjj.png" data-ai-hint="jiu-jitsu gi" alt="Gi de Competición" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Rashguard bjj Albatros Team.</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Ligero, resistente y diseñado para la victoria.</p>
-                  <p className="text-primary font-bold text-lg mt-2">$300 MXN</p>
-                </CardContent>
-              </Card>
-              <Card className="group overflow-hidden">
-                <Image src="/camisakick.png" data-ai-hint="sparring gloves" alt="Guantes de Sparring" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                <CardContent className="p-4">
-                  <h3 className="text-xl font-bold">Jersey Kick Boxing Albtatros Team.</h3>
-                  <p className="text-muted-foreground text-sm mt-1">Protección y durabilidad para asaltos intensos.</p>
-                  <p className="text-primary font-bold text-lg mt-2">$300 MXN</p>
-                </CardContent>
-              </Card>
+               {products.map((product) => (
+                <Dialog key={product.id}>
+                  <DialogTrigger asChild>
+                    <Card className="group overflow-hidden cursor-pointer">
+                      <Image src={product.image} alt={product.name} width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                      <CardContent className="p-4">
+                        <h3 className="text-xl font-bold">{product.name}</h3>
+                        <p className="text-muted-foreground text-sm mt-1">{product.description}</p>
+                        <p className="text-primary font-bold text-lg mt-2">{product.price}</p>
+                      </CardContent>
+                    </Card>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>{product.name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="py-4 space-y-4">
+                      <Image src={product.image} alt={product.name} width={400} height={300} className="w-full rounded-md object-cover" />
+                      <div>
+                        <Label className="text-base font-medium">Talla</Label>
+                        <RadioGroup defaultValue="M" className="flex gap-2 mt-2">
+                          {product.sizes.map(size => (
+                            <Label
+                              key={size}
+                              htmlFor={`size-${product.id}-${size}`}
+                              className="flex items-center justify-center border rounded-md p-2 text-sm font-medium cursor-pointer has-[:checked]:bg-primary has-[:checked]:text-primary-foreground has-[:checked]:border-primary aspect-square w-12 h-12"
+                            >
+                              <RadioGroupItem value={size} id={`size-${product.id}-${size}`} className="sr-only" />
+                              {size}
+                            </Label>
+                          ))}
+                        </RadioGroup>
+                      </div>
+                      <div className="flex justify-between items-center pt-2">
+                        <p className="text-3xl font-black text-primary tracking-tighter">{product.price}</p>
+                        <Button size="lg">Comprar</Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ))}
             </div>
           </div>
         </section>
