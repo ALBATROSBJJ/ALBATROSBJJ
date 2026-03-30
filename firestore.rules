@@ -11,7 +11,7 @@
  *    ensures that ownership is inherited by all nested documents.
  * 2. /alimentos/{foodItemId}: This is a top-level, public-read collection that serves as a global
  *    food catalog. It is read-only for clients to ensure data integrity.
- * 3. /eventRegistrations/{registrationId}: A public-write collection for event sign-ups, with
+ * 3. /registro_eventos/{registrationId}: A public-write collection for event sign-ups, with
  *    strict validation rules.
  *
  * Key Security Decisions:
@@ -23,7 +23,7 @@
  * - Authorization over Validation: In this prototyping stage, rules focus on WHO can access data
  *   (authorization) rather than WHAT shape the data is in (validation). We only validate fields
 *    that are critical for maintaining ownership and relational links (e.g., 'userId'). For public-write
-*    collections like eventRegistrations, we enforce stricter data validation.
+*    collections like registro_eventos, we enforce stricter data validation.
  *
  * Denormalization for Authorization: To ensure fast and secure access checks, ownership information
  * is denormalized. For example, a document in `/perfiles/{userId}/mealLogs/{mealLogId}` contains a
@@ -258,12 +258,12 @@ service cloud.firestore {
     /**
      * @description Controls access to public event registrations. This collection is publicly
      *              writable to allow anyone to sign up for an event.
-     * @path /eventRegistrations/{registrationId}
+     * @path /registro_eventos/{registrationId}
      * @allow (create) Any client can create a new registration document, provided it passes validation.
      * @deny (read, update, delete) Clients cannot read, update, or delete registrations to protect user privacy.
      * @principle Allows public write with strict data validation. Prevents clients from changing payment status.
      */
-    match /eventRegistrations/{registrationId} {
+    match /registro_eventos/{registrationId} {
       allow create: if isValidEventRegistration(request.resource.data);
       allow read, update, delete: if false;
     }

@@ -112,7 +112,7 @@ export default function WelcomePage() {
   const initialScrollTop = useRef(0);
   const [isInteracting, setIsInteracting] = useState(false);
   
-  const [dialogView, setDialogView] = useState<'details' | 'form' | 'code'>('details');
+  const [dialogView, setDialogView] = useState<'details' | 'form' | 'payment'>('details');
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [currentRegistrationId, setCurrentRegistrationId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -232,10 +232,11 @@ export default function WelcomePage() {
         }
         const db = getFirestore(app);
 
-        const docRef = await addDoc(collection(db, "eventRegistrations"), registrationData);
+        const docRef = await addDoc(collection(db, "registro_eventos"), registrationData);
         await updateDoc(docRef, { paymentReference: docRef.id });
 
         setCurrentRegistrationId(docRef.id);
+        setDialogView('payment'); // Switch to payment view
         toast({
             title: "¡Inscripción Recibida!",
             description: "Ahora puedes proceder con el pago.",
@@ -561,7 +562,7 @@ export default function WelcomePage() {
                     </Card>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
-                    {currentEvent && dialogView === 'details' && (
+                    {dialogView === 'details' && (
                       <>
                         <DialogHeader>
                           <DialogTitle>{event.name}</DialogTitle>
@@ -587,15 +588,16 @@ export default function WelcomePage() {
                       </>
                     )}
 
-                    {currentEvent && dialogView === 'form' && (
-                      <>
-                        {!currentRegistrationId ? (
-                          <>
+                    {dialogView === 'form' && (
+                        <>
                             <DialogHeader>
-                              <DialogTitle>Registro para {currentEvent.name}</DialogTitle>
+                              <DialogTitle>Registro para {currentEvent?.name}</DialogTitle>
                               <DialogDescription>
-                                Completa tus datos para la inscripción.
-                                <Button variant="link" className="p-0 h-auto ml-1 text-primary" onClick={() => setDialogView('code')}>¿Tienes un código de profesor?</Button>
+                                Completa tus datos para la inscripción o{" "}
+                                <Button variant="link" className="p-0 h-auto text-primary" onClick={() => setDialogView('code')}>
+                                  inscribe con código de profesor
+                                </Button>
+                                .
                               </DialogDescription>
                             </DialogHeader>
                             <form onSubmit={handleFinalizeRegistration} className="py-4 space-y-4">
@@ -639,8 +641,10 @@ export default function WelcomePage() {
                               </DialogFooter>
                             </form>
                           </>
-                        ) : (
-                          <>
+                    )}
+
+                    {dialogView === 'payment' && (
+                         <>
                             <DialogHeader>
                               <DialogTitle>¡Inscripción Recibida!</DialogTitle>
                               <DialogDescription>
@@ -700,15 +704,13 @@ export default function WelcomePage() {
                               </DialogClose>
                             </DialogFooter>
                           </>
-                        )}
-                      </>
                     )}
 
-                    {currentEvent && dialogView === 'code' && (
+                    {dialogView === 'code' && (
                         <>
                             <DialogHeader>
                                 <DialogTitle>Inscripción con Código</DialogTitle>
-                                <DialogDescription>Ingresa el código que te proporcionó tu profesor para registrarte en {currentEvent.name}.</DialogDescription>
+                                <DialogDescription>Ingresa el código que te proporcionó tu profesor para registrarte en {currentEvent?.name}.</DialogDescription>
                             </DialogHeader>
                             <form className="py-4 space-y-4">
                                 <div className="space-y-2">
