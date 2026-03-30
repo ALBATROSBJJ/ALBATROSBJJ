@@ -568,9 +568,9 @@ export default function WelcomePage() {
                             strokeLinejoin="round"
                             className="h-7 w-7 text-primary flex-shrink-0"
                           >
-                            <path d="M12 4H8a2 2 0 0 0-2 2v4h12V6a2 2 0 0 0-2-2h-4Z" />
-                            <path d="M8 10v10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V10" />
-                            <path d="M10 14h4" />
+                            <path d="M6 10h12v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V10z" />
+                            <path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" />
+                            <path d="M15 7h-1" />
                           </svg>
                           <span>Sanitarios</span>
                         </li>
