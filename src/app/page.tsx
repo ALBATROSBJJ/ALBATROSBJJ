@@ -10,9 +10,10 @@ import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Input } from '@/components/ui/input';
 
 const sections = [
   { id: 'inicio', name: 'Inicio' },
@@ -94,7 +95,7 @@ export default function WelcomePage() {
   const startY = useRef(0);
   const initialScrollTop = useRef(0);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [dialogView, setDialogView] = useState('details'); // 'details' or 'options'
+  const [dialogView, setDialogView] = useState('details'); // 'details', 'options', 'form'
 
   // Intersection Observer to set active section
   useEffect(() => {
@@ -454,7 +455,7 @@ export default function WelcomePage() {
                     </Card>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
-                    {dialogView === 'details' ? (
+                    {dialogView === 'details' && (
                       <>
                         <DialogHeader>
                           <DialogTitle>{event.name}</DialogTitle>
@@ -478,17 +479,69 @@ export default function WelcomePage() {
                           </div>
                         </div>
                       </>
-                    ) : (
+                    )}
+                    {dialogView === 'options' && (
                       <>
                         <DialogHeader>
                           <DialogTitle>Inscripción para {event.name}</DialogTitle>
                           <DialogDescription>Selecciona cómo quieres continuar.</DialogDescription>
                         </DialogHeader>
                         <div className="py-4 space-y-4">
-                          <Button className="w-full" size="lg">DATOS PERSONALES</Button>
+                          <Button className="w-full" size="lg" onClick={() => setDialogView('form')}>DATOS PERSONALES</Button>
                           <Button className="w-full" size="lg" variant="outline">CODIGO</Button>
                         </div>
                       </>
+                    )}
+                    {dialogView === 'form' && (
+                        <>
+                            <DialogHeader>
+                                <DialogTitle>Registro para {event.name}</DialogTitle>
+                                <DialogDescription>Completa tus datos personales para la inscripción.</DialogDescription>
+                            </DialogHeader>
+                            <form className="py-4 space-y-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="fullName">Nombre Completo</Label>
+                                    <Input id="fullName" placeholder="Nombre y Apellido" required />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="age">Edad</Label>
+                                        <Input id="age" type="number" placeholder="25" required />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="category">Categoría</Label>
+                                        <Input id="category" placeholder="Ej. Peso Pluma" required />
+                                    </div>
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="birthDate">Fecha de Nacimiento</Label>
+                                    <Input id="birthDate" type="date" required />
+                                </div>
+
+                                <Separator />
+
+                                <h4 className="text-sm font-medium text-muted-foreground">Datos Opcionales</h4>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="curp">CURP</Label>
+                                    <Input id="curp" placeholder="Clave Única de Registro de Población" />
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                      <Label htmlFor="phone">Teléfono Celular</Label>
+                                      <Input id="phone" type="tel" placeholder="999-999-9999" />
+                                  </div>
+                                  <div className="space-y-2">
+                                      <Label htmlFor="email">Correo Electrónico</Label>
+                                      <Input id="email" type="email" placeholder="atleta@email.com" />
+                                  </div>
+                                </div>
+                            </form>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setDialogView('options')}>Volver</Button>
+                                <Button type="submit">Finalizar Inscripción</Button>
+                            </DialogFooter>
+                        </>
                     )}
                   </DialogContent>
                 </Dialog>
