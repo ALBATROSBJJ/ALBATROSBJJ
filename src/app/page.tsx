@@ -102,6 +102,65 @@ const events: Event[] = [
     },
 ];
 
+const servicesData = [
+  {
+      id: 'bjj',
+      name: 'Jiu Jitsu Brasileño',
+      image: '/bjj.png',
+      imageHint: 'jiu-jitsu',
+      description: 'Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.',
+      price: '$600 MXN',
+      advantages: [
+          'Mejora la condición física y la fuerza funcional.',
+          'Excelente para la defensa personal efectiva.',
+          'Fomenta la disciplina, la resolución de problemas y la confianza.'
+      ],
+      trial: '¡Clase de prueba totalmente sin costo!',
+      whatsappMessage: 'Hola, mi nombre es {name} y estoy interesado en agendar una clase de prueba de Jiu Jitsu Brasileño.'
+  },
+  {
+      id: 'kickboxing',
+      name: 'Kick Boxing',
+      image: '/kick.png',
+      imageHint: 'kickboxing muay-thai',
+      description: 'Entrenamiento de combate que combina golpes de puño y patadas.',
+      price: '$600 MXN',
+      advantages: [
+          'Incrementa la resistencia cardiovascular y la potencia.',
+          'Quema una gran cantidad de calorías.',
+          'Desarrolla la coordinación, agilidad y reflejos.'
+      ],
+      trial: '¡Clase de prueba totalmente sin costo!',
+      whatsappMessage: 'Hola, mi nombre es {name} y estoy interesado en agendar una clase de prueba de Kick Boxing.'
+  },
+  {
+      id: 'promo',
+      name: 'PROMOCION',
+      image: '/combo.png',
+      imageHint: 'training promotion',
+      description: 'Jiu Jitsu y Kick Boxing; complementandose como una.',
+      price: '$900 MXN',
+      advantages: [
+          'Obtén lo mejor de ambos mundos: grappling y striking.',
+          'Plan de entrenamiento completo para ser un peleador versátil.',
+          'Ahorra en tu mensualidad al combinar ambas disciplinas.'
+      ],
+      trial: '¡Pregunta por nuestras clases de prueba!',
+      whatsappMessage: 'Hola, mi nombre es {name} y estoy interesado en la promoción de Jiu Jitsu y Kick Boxing.'
+  },
+  {
+      id: 'proximamente',
+      name: 'Proximamente',
+      image: '/prox.png',
+      imageHint: 'coming soon',
+      description: 'Muy pronto.',
+      price: 'ESTAR ATENTOS...',
+      advantages: null,
+      trial: null,
+      whatsappMessage: null
+  }
+];
+
 export default function WelcomePage() {
   const [activeSection, setActiveSection] = useState('inicio');
   const sectionRefs = useRef<(HTMLElement | null)[]>([]);
@@ -117,9 +176,9 @@ export default function WelcomePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const [jiuJitsuDialogView, setJiuJitsuDialogView] = useState<'details' | 'form'>('details');
+  const [currentService, setCurrentService] = useState<(typeof servicesData)[0] | null>(null);
+  const [serviceDialogView, setServiceDialogView] = useState<'details' | 'form'>('details');
   const [trialUserName, setTrialUserName] = useState('');
-
 
   // Intersection Observer to set active section
   useEffect(() => {
@@ -644,70 +703,72 @@ export default function WelcomePage() {
                    <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Nuestro espacio multi disciplinar y complementario.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <Dialog onOpenChange={(isOpen) => { if (!isOpen) { setJiuJitsuDialogView('details'); setTrialUserName(''); } }}>
+                {servicesData.map((service) => (
+                  <Dialog key={service.id} onOpenChange={(isOpen) => { if (!isOpen) { setServiceDialogView('details'); setTrialUserName(''); setCurrentService(null); } }}>
                     <DialogTrigger asChild>
-                      <Card className="group overflow-hidden cursor-pointer">
-                          <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                          <CardContent className="p-4">
-                              <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
-                              <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
-                              <p className="text-primary font-bold text-lg mt-2">$600 MXN</p>
-                          </CardContent>
+                      <Card className="group overflow-hidden cursor-pointer" onClick={() => setCurrentService(service)}>
+                        <Image src={service.image} data-ai-hint={service.imageHint} alt={service.name} width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                        <CardContent className="p-4">
+                          <h3 className="text-xl font-bold">{service.name}</h3>
+                          <p className="text-muted-foreground text-sm mt-1">{service.description}</p>
+                          <p className="text-primary font-bold text-lg mt-2">{service.price}</p>
+                        </CardContent>
                       </Card>
                     </DialogTrigger>
+                    {currentService && currentService.id === service.id && (
                     <DialogContent className="sm:max-w-md">
-                      {jiuJitsuDialogView === 'details' && (
+                      {serviceDialogView === 'details' && (
                         <>
                           <DialogHeader>
-                            <DialogTitle>Jiu Jitsu Brasileño</DialogTitle>
-                            <DialogDescription>
-                                Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.
-                            </DialogDescription>
+                            <DialogTitle>{currentService.name}</DialogTitle>
+                            <DialogDescription>{currentService.description}</DialogDescription>
                           </DialogHeader>
                           <div className="py-4 space-y-4">
+                            {currentService.advantages && (
                               <div>
-                                  <h4 className="font-semibold text-foreground">Ventajas</h4>
-                                  <ul className="text-sm text-muted-foreground list-disc pl-5 mt-2">
-                                      <li>Mejora la condición física y la fuerza funcional.</li>
-                                      <li>Excelente para la defensa personal efectiva.</li>
-                                      <li>Fomenta la disciplina, la resolución de problemas y la confianza.</li>
-                                  </ul>
+                                <h4 className="font-semibold text-foreground">Ventajas</h4>
+                                <ul className="text-sm text-muted-foreground list-disc pl-5 mt-2">
+                                  {currentService.advantages.map((advantage, i) => <li key={i}>{advantage}</li>)}
+                                </ul>
                               </div>
+                            )}
+                            {currentService.trial && (
                               <div className="p-4 rounded-md border bg-secondary/50 text-center">
-                                  <p className="font-bold text-primary">¡Clase de prueba totalmente sin costo!</p>
+                                <p className="font-bold text-primary">{currentService.trial}</p>
                               </div>
+                            )}
                           </div>
                           <DialogFooter>
-                              <Button size="lg" className="w-full" onClick={() => setJiuJitsuDialogView('form')}>
-                                  AGENDAR CLASE
+                            {currentService.whatsappMessage ? (
+                              <Button size="lg" className="w-full" onClick={() => setServiceDialogView('form')}>
+                                AGENDAR CLASE
                               </Button>
+                            ) : <DialogClose asChild><Button size="lg" className="w-full" variant="outline">Cerrar</Button></DialogClose>}
                           </DialogFooter>
                         </>
                       )}
-                      {jiuJitsuDialogView === 'form' && (
+                      {serviceDialogView === 'form' && currentService.whatsappMessage && (
                         <>
                           <DialogHeader>
                             <DialogTitle>Agendar Clase de Prueba</DialogTitle>
-                            <DialogDescription>
-                              Para personalizar tu experiencia, por favor dinos tu nombre.
-                            </DialogDescription>
+                            <DialogDescription>Para personalizar tu experiencia, por favor dinos tu nombre.</DialogDescription>
                           </DialogHeader>
                           <div className="py-4 space-y-4">
                             <div className="space-y-2">
                               <Label htmlFor="trial-name">Tu Nombre</Label>
-                              <Input 
-                                id="trial-name" 
-                                placeholder="Nombre Completo" 
-                                value={trialUserName} 
+                              <Input
+                                id="trial-name"
+                                placeholder="Nombre Completo"
+                                value={trialUserName}
                                 onChange={(e) => setTrialUserName(e.target.value)}
                               />
                             </div>
                           </div>
                           <DialogFooter>
-                            <Button variant="outline" onClick={() => setJiuJitsuDialogView('details')}>Volver</Button>
+                            <Button variant="outline" onClick={() => setServiceDialogView('details')}>Volver</Button>
                             <Button asChild size="lg" disabled={!trialUserName.trim()}>
                               <a
-                                href={`https://wa.me/529901443886?text=Hola, mi nombre es ${encodeURIComponent(trialUserName.trim())} y estoy interesado en agendar una clase de prueba de Jiu Jitsu Brasileño.`}
+                                href={`https://wa.me/529901443886?text=${encodeURIComponent(currentService.whatsappMessage.replace('{name}', trialUserName.trim()))}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >
@@ -718,31 +779,9 @@ export default function WelcomePage() {
                         </>
                       )}
                     </DialogContent>
+                    )}
                   </Dialog>
-                   <Card className="group overflow-hidden">
-                      <Image src="/kick.png" data-ai-hint="creatine supplement" alt="Kick Boxing" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                      <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Kick Boxing</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Entrenamiento de combate que combina golpes de puño y patadas.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$600 MXN</p>
-                      </CardContent>
-                  </Card>
-                  <Card className="group overflow-hidden">
-                      <Image src="/combo.png" alt="Promoción" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                      <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">PROMOCION</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Jiu Jitsu y Kick Boxing; complementandose como una.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$900 MXN</p>
-                      </CardContent>
-                  </Card>
-                   <Card className="group overflow-hidden">
-                      <Image src="/prox.png" alt="Proximamente" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                      <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Proximamente</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Muy pronto.</p>
-                          <p className="text-primary font-bold text-lg mt-2">ESTAR ATENTOS...</p>
-                      </CardContent>
-                  </Card>
+                ))}
               </div>
            </div>
         </section>
@@ -1056,5 +1095,6 @@ export default function WelcomePage() {
 
 
     
+
 
 
