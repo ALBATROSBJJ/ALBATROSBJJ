@@ -111,7 +111,7 @@ export default function WelcomePage() {
   const initialScrollTop = useRef(0);
   const [isInteracting, setIsInteracting] = useState(false);
   
-  const [dialogView, setDialogView] = useState<'details' | 'options' | 'form' | 'code' | 'payment' | 'confirmation'>('details');
+  const [dialogView, setDialogView] = useState<'details' | 'options' | 'form' | 'code' | 'post-registration'>('details');
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
   const [currentRegistrationId, setCurrentRegistrationId] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -209,7 +209,7 @@ export default function WelcomePage() {
         await updateDoc(docRef, { paymentReference: docRef.id });
 
         setCurrentRegistrationId(docRef.id);
-        setDialogView('payment');
+        setDialogView('post-registration');
     } catch (error) {
         console.error("Error saving to Firestore:", error);
         alert("Hubo un error al guardar tu registro. Por favor, inténtalo de nuevo.");
@@ -635,52 +635,50 @@ export default function WelcomePage() {
                             </form>
                         </>
                     )}
-                    {dialogView === 'payment' && (
+                    {dialogView === 'post-registration' && (
                       <>
                         <DialogHeader>
-                            <DialogTitle>Realizar Pago</DialogTitle>
-                            <DialogDescription>Completa tu inscripción realizando el pago para el evento {currentEvent?.name}.</DialogDescription>
+                            <DialogTitle>¡Inscripción Recibida!</DialogTitle>
+                            <DialogDescription>
+                                Para completar tu registro para {currentEvent?.name}, realiza el pago de <span className="font-bold text-primary">{currentEvent?.price}</span>.
+                            </DialogDescription>
                         </DialogHeader>
                         <div className="py-4 space-y-6">
                             <div className="p-4 rounded-md border bg-secondary/50">
                                 <p className="text-sm text-muted-foreground">Tu número de referencia de pago es:</p>
                                 <p className="text-2xl font-bold font-mono text-center py-2">{currentRegistrationId}</p>
-                                <p className="text-xs text-muted-foreground text-center">Incluye esta referencia en el concepto de tu transferencia.</p>
+                                <p className="text-xs text-muted-foreground text-center">Usa esta referencia en el concepto de tu pago.</p>
                             </div>
+                            
                             <div className="space-y-4">
-                                <h4 className="font-semibold text-foreground">Opción 1: Transferencia Bancaria</h4>
-                                <ul className="text-sm text-muted-foreground list-none space-y-1 p-4 border rounded-md">
-                                    <li><span className="font-semibold text-foreground">CLABE:</span> 722969020451950629</li>
-                                    <li><span className="font-semibold text-foreground">Beneficiario:</span> Jorge Vega Cortes</li>
-                                    <li><span className="font-semibold text-foreground">Institución:</span> Mercado Pago</li>
-                                </ul>
+                                <div>
+                                    <h4 className="font-semibold text-foreground mb-2">Opción 1: Transferencia Bancaria</h4>
+                                    <ul className="text-sm text-muted-foreground list-none space-y-1 p-4 border rounded-md">
+                                        <li><span className="font-semibold text-foreground">CLABE:</span> 722969020451950629</li>
+                                        <li><span className="font-semibold text-foreground">Beneficiario:</span> Jorge Vega Cortes</li>
+                                        <li><span className="font-semibold text-foreground">Institución:</span> Mercado Pago</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-semibold text-foreground mb-2">Opción 2: Tarjeta de Crédito/Débito</h4>
+                                    <Button asChild className="w-full" size="lg">
+                                        <a href="https://mpago.la/2GBPeGU" target="_blank" rel="noopener noreferrer">
+                                            Pagar con Mercado Pago
+                                        </a>
+                                    </Button>
+                                </div>
                             </div>
-                             <div className="space-y-2">
-                                <h4 className="font-semibold text-foreground">Opción 2: Tarjeta de Crédito/Débito</h4>
-                                <Button asChild className="w-full" size="lg">
-                                    <a href="https://mpago.la/2GBPeGU" target="_blank" rel="noopener noreferrer">
-                                        Pagar con Mercado Pago
-                                    </a>
-                                </Button>
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button onClick={() => setDialogView('confirmation')}>He realizado mi pago</Button>
-                        </DialogFooter>
-                      </>
-                    )}
-                    {dialogView === 'confirmation' && (
-                        <>
-                            <DialogHeader>
-                                <DialogTitle>¡Inscripción Recibida!</DialogTitle>
-                            </DialogHeader>
-                            <div className="py-4 space-y-4 text-center">
-                                <p className="text-muted-foreground">Gracias por registrarte en <span className="font-bold">{currentEvent?.name}</span>. Tu pago será verificado por nuestro equipo en breve.</p>
-                                <p className="text-sm text-muted-foreground">Tu referencia de pago: <span className="font-bold font-mono">{currentRegistrationId}</span></p>
 
-                                <Button asChild>
+                            <Separator />
+                            
+                            <div>
+                                <h4 className="font-semibold text-foreground mb-2">Paso Final: Confirmar Pago</h4>
+                                <p className="text-sm text-muted-foreground mb-3">
+                                    Una vez realizado el pago, envíanos tu comprobante por WhatsApp para asegurar tu lugar.
+                                </p>
+                                <Button asChild className="w-full">
                                     <a 
-                                        href={`https://wa.me/?text=Hola, he completado mi inscripción al evento ${currentEvent?.name}. Mi referencia de pago es ${currentRegistrationId}. Adjunto mi comprobante.`}
+                                        href={`https://wa.me/529901443886?text=Hola, he completado mi inscripción al evento "${currentEvent?.name}". Mi referencia de pago es ${currentRegistrationId}. Adjunto mi comprobante.`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                     >
@@ -688,12 +686,14 @@ export default function WelcomePage() {
                                     </a>
                                 </Button>
                             </div>
-                            <DialogFooter>
-                                 <DialogClose asChild>
-                                    <Button variant="outline" onClick={() => setDialogView('details')}>Cerrar</Button>
-                                </DialogClose>
-                            </DialogFooter>
-                        </>
+
+                        </div>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button variant="outline" onClick={() => setDialogView('details')}>Cerrar</Button>
+                            </DialogClose>
+                        </DialogFooter>
+                      </>
                     )}
                   </DialogContent>
                 </Dialog>
