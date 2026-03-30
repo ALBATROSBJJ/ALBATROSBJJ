@@ -5,9 +5,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mail, MapPin, Phone, ChevronsRight, Flame, HeartPulse, BrainCircuit } from 'lucide-react';
+import { Mail, MapPin, Phone, ChevronsRight, Flame, HeartPulse, BrainCircuit, Menu } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Separator } from '@/components/ui/separator';
 
 const sections = [
   { id: 'inicio', name: 'Inicio' },
@@ -179,11 +181,52 @@ export default function WelcomePage() {
        <header className="fixed top-0 left-0 right-0 z-40 bg-gray-900/60 backdrop-blur-sm">
         <div className="container mx-auto flex h-20 items-center justify-between px-4">
           <Logo />
-          <Button asChild>
-            <Link href="/login">
-              Acceso Atletas <ChevronsRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-4">
+            <Button asChild>
+              <Link href="/login">
+                Acceso Atletas <ChevronsRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </nav>
+          {/* Mobile Navigation */}
+          <div className="md:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Abrir menú</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="bg-card/90 backdrop-blur-sm w-3/4">
+                  <nav className="flex flex-col gap-6 text-lg font-medium mt-16">
+                      {sections.map((section) => (
+                          <SheetClose asChild key={section.id}>
+                              <Link
+                                  href={`#${section.id}`}
+                                  onClick={(e) => {
+                                      e.preventDefault();
+                                      const targetSection = document.getElementById(section.id);
+                                      targetSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                  }}
+                                  className="text-foreground hover:text-primary transition-colors"
+                              >
+                                  {section.name}
+                              </Link>
+                          </SheetClose>
+                      ))}
+                      <Separator className="my-2 bg-border" />
+                       <SheetClose asChild>
+                         <Button asChild className="w-full">
+                            <Link href="/login">
+                              Acceso Atletas <ChevronsRight className="ml-2 h-4 w-4" />
+                            </Link>
+                          </Button>
+                       </SheetClose>
+                  </nav>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
       </header>
 
