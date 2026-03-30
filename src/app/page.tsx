@@ -601,7 +601,7 @@ export default function WelcomePage() {
           className="min-h-screen flex items-center py-20 relative"
         >
           <Image
-            src="/prox.png"
+            src="/bjj.png"
             alt="Nuestro Rendimiento"
             fill
             className="object-cover z-0"
@@ -647,7 +647,7 @@ export default function WelcomePage() {
                   <Dialog onOpenChange={(isOpen) => { if (!isOpen) { setJiuJitsuDialogView('details'); setTrialUserName(''); } }}>
                     <DialogTrigger asChild>
                       <Card className="group overflow-hidden cursor-pointer">
-                          <Image src="/prox.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                          <Image src="/bjj.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                           <CardContent className="p-4">
                               <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
                               <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
@@ -1056,4 +1056,5 @@ export default function WelcomePage() {
 
 
     
+
 
