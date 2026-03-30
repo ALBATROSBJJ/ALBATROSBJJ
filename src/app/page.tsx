@@ -641,14 +641,46 @@ export default function WelcomePage() {
                    <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">Nuestro espacio multi disciplinar y complementario.</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <Card className="group overflow-hidden">
-                      <Image src="/prox.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
-                      <CardContent className="p-4">
-                          <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
-                          <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
-                          <p className="text-primary font-bold text-lg mt-2">$600 MXN</p>
-                      </CardContent>
-                  </Card>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Card className="group overflow-hidden cursor-pointer">
+                          <Image src="/prox.png" data-ai-hint="jiu-jitsu" alt="Jiu Jitsu Brasileño" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
+                          <CardContent className="p-4">
+                              <h3 className="text-xl font-bold">Jiu Jitsu Brasileño</h3>
+                              <p className="text-muted-foreground text-sm mt-1">Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.</p>
+                              <p className="text-primary font-bold text-lg mt-2">$600 MXN</p>
+                          </CardContent>
+                      </Card>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Jiu Jitsu Brasileño</DialogTitle>
+                        <DialogDescription>
+                            Arte marcial enfocado en el control y la sumisión en el suelo, donde la técnica supera a la fuerza.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="py-4 space-y-4">
+                          <div>
+                              <h4 className="font-semibold text-foreground">Ventajas</h4>
+                              <ul className="text-sm text-muted-foreground list-disc pl-5 mt-2">
+                                  <li>Mejora la condición física y la fuerza funcional.</li>
+                                  <li>Excelente para la defensa personal efectiva.</li>
+                                  <li>Fomenta la disciplina, la resolución de problemas y la confianza.</li>
+                              </ul>
+                          </div>
+                          <div className="p-4 rounded-md border bg-secondary/50 text-center">
+                              <p className="font-bold text-primary">¡Clase de prueba totalmente sin costo!</p>
+                          </div>
+                      </div>
+                      <DialogFooter>
+                          <Button asChild size="lg" className="w-full">
+                              <a href="https://wa.me/529901443886?text=Hola, estoy interesado en agendar una clase de prueba de Jiu Jitsu Brasileño." target="_blank" rel="noopener noreferrer">
+                                  AGENDAR CLASE
+                              </a>
+                          </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                    <Card className="group overflow-hidden">
                       <Image src="/kick.png" data-ai-hint="creatine supplement" alt="Kick Boxing" width={400} height={300} className="w-full h-48 object-cover group-hover:scale-105 transition-transform" />
                       <CardContent className="p-4">
