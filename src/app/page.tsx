@@ -531,7 +531,7 @@ export default function WelcomePage() {
                   <div className="grid grid-cols-1 md:grid-cols-2">
                     <div className="relative h-80 md:h-auto">
                       <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.039755913217!2d-89.7027809259273!3d20.99088828859941!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5670094e503377%3A0x2df839a9134a6627!2sAlbatros%20BJJ%20%26%20M.M.A!5e0!3m2!1sen!2smx!4v1717188339591!5m2!1sen!2smx"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.039755913217!2d-89.7027809259273!3d20.99088828859941!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8f5670094e503377%3A0x2df839a9134a6627!2sAlbatros%20BJJ%20%26%20M.M.A!5e0!3m2!1sen!2smx!4v1718136330055!5m2!1sen!2smx"
                         width="100%"
                         height="100%"
                         style={{ border: 0 }}
