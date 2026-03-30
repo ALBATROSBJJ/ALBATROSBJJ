@@ -52,7 +52,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <SidebarInset>
             <header className="sticky top-0 z-10 flex h-14 items-center justify-between border-b bg-background/90 backdrop-blur-sm px-4 md:hidden">
               <Logo />
-              <SidebarTrigger />
+              <SidebarTrigger className="text-primary" />
             </header>
             <div className="flex-1 overflow-y-auto">
               {children}
