@@ -942,7 +942,7 @@ export default function WelcomePage() {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter">Establecer <span className="text-primary">Contacto</span></h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto">¿Listo para el siguiente nivel? Aquí nos encuentras. No pierdas nuestro tiempo.</p>
             <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-                <a href="https://maps.app.goo.gl/BMvCRRp3eTGmjU8K9" target="_blank" rel="noopener noreferrer" className="flex flex-col md:flex-row items-center gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
+                <a href="https://maps.app.goo.gl/epiGiZkjwYH3Mk938" target="_blank" rel="noopener noreferrer" className="flex flex-col md:flex-row items-center gap-4 p-4 -m-4 rounded-lg hover:bg-accent transition-colors">
                     <div className="bg-primary/10 text-primary p-4 rounded-lg flex-shrink-0">
                         <MapPin className="h-8 w-8" />
                     </div>
