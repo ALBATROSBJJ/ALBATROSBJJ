@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Mail, MapPin, Phone, ChevronsRight, Flame, HeartPulse, BrainCircuit, Menu, Copy, Maximize, AirVent, ParkingCircle, ShowerHead, Refrigerator, Wifi } from 'lucide-react';
+import { Mail, MapPin, Phone, ChevronsRight, Flame, HeartPulse, BrainCircuit, Menu, Copy, Maximize, AirVent, ParkingCircle, Refrigerator, Wifi } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
@@ -557,7 +557,21 @@ export default function WelcomePage() {
                           <span>Estacionamiento</span>
                         </li>
                         <li className="flex items-center gap-4">
-                          <ShowerHead className="h-7 w-7 text-primary flex-shrink-0" />
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="h-7 w-7 text-primary flex-shrink-0"
+                          >
+                            <path d="M12 4H8a2 2 0 0 0-2 2v4h12V6a2 2 0 0 0-2-2h-4Z" />
+                            <path d="M8 10v10a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V10" />
+                            <path d="M10 14h4" />
+                          </svg>
                           <span>Sanitarios</span>
                         </li>
                         <li className="flex items-center gap-4">
@@ -969,3 +983,6 @@ export default function WelcomePage() {
 
 
 
+
+
+    
