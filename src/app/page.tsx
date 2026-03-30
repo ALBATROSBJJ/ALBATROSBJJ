@@ -458,7 +458,7 @@ export default function WelcomePage() {
                       <DialogDescription>{event.date}</DialogDescription>
                     </DialogHeader>
                     <div className="py-4 space-y-4">
-                      <Image src={event.image} alt={event.name} width={400} height={300} className="w-full rounded-md object-cover" />
+                      <Image src={event.image} alt={event.name} width={400} height={225} className="w-full aspect-video rounded-md object-cover" />
                       <div className="space-y-3">
                          <div>
                             <h4 className="font-semibold text-foreground">Descripción</h4>
