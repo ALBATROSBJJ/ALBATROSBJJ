@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -568,9 +567,10 @@ export default function WelcomePage() {
                             strokeLinejoin="round"
                             className="h-7 w-7 text-primary flex-shrink-0"
                           >
-                            <path d="M6 10h12v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V10z" />
-                            <path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" />
-                            <path d="M15 7h-1" />
+                            <path d="M4 14l2-2h12l2 2v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-4z"/>
+                            <path d="M6 14V8a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v6"/>
+                            <path d="M12 6V4"/>
+                            <path d="M10 4h4"/>
                           </svg>
                           <span>Sanitarios</span>
                         </li>
